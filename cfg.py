@@ -111,8 +111,8 @@ SYN_SCENES = [
 # LOG_FIlE = '008_household_bedroom_floor/images/'
 # SORTED_OBJ_IDX = None
 
-LOG_FIlE = '016_household_bedroom_floor/images/'
-SORTED_OBJ_IDX = np.array([1, 2, 3, 0])
+# LOG_FIlE = '016_household_bedroom_floor/images/'
+# SORTED_OBJ_IDX = np.array([1, 2, 3, 0])
 
 # LOG_FIlE = '023_household_bedroom_floor/images/'
 # SORTED_OBJ_IDX = None
@@ -329,13 +329,13 @@ SORTED_OBJ_IDX = np.array([1, 2, 3, 0])
 # LOG_FIlE = '010_arl_lab_floor/images/'
 # SORTED_OBJ_IDX = None
 
-# LOG_FIlE = '011_arl_lab_bench_top/images/'
-# SORTED_OBJ_IDX = None
+LOG_FIlE = '011_arl_lab_bench_top/images/'
+SORTED_OBJ_IDX = None
 
 #######################################
 #######################################
 
-LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs/' + LOG_FIlE
-LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset/' + LOG_FIlE
+LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs_arl_lab/' + LOG_FIlE
+LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset_arl_lab/' + LOG_FIlE
 # LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'LabelFusion/train/' + LOG_FIlE
 

@@ -47,10 +47,12 @@ def main():
 
         rgb_addr   = config.LABELFUSION_AFF_DATASET_PATH + str_num + config.RGB_EXT
         depth_addr = config.LABELFUSION_AFF_DATASET_PATH + str_num + config.DEPTH_EXT
+        label_addr = config.LABELFUSION_AFF_DATASET_PATH + str_num + config.LABEL_EXT
         aff_label_addr = config.LABELFUSION_AFF_DATASET_PATH + str_num + config.AFF_LABEL_EXT
 
         rgb      = np.array(Image.open(rgb_addr))
         depth    = np.array(Image.open(depth_addr))
+        label    = np.array(Image.open(label_addr))
         aff_label    = np.array(Image.open(aff_label_addr))
 
         # gt pose
@@ -146,6 +148,7 @@ def main():
         # LABEL INFO
         #####################
 
+        helper_utils.print_class_labels(label)
         helper_utils.print_class_labels(aff_label)
 
         #####################
@@ -154,6 +157,8 @@ def main():
 
         rgb         = cv2.resize(rgb, config.RESIZE)
         depth       = cv2.resize(depth, config.RESIZE)
+        label       = cv2.resize(label, config.RESIZE)
+        color_label = affpose_dataset_utils.colorize_aff_mask(label)
         aff_label       = cv2.resize(aff_label, config.RESIZE)
         color_aff_label = affpose_dataset_utils.colorize_aff_mask(aff_label)
         cv2_obj_parts_img = cv2.resize(cv2_obj_parts_img, config.RESIZE)
@@ -161,6 +166,7 @@ def main():
         cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
         cv2.imshow('depth', depth)
         cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
+        cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
         cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))
 
