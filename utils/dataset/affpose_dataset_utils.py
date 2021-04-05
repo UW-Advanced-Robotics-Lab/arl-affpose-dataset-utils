@@ -13,6 +13,40 @@ DRAW_OBJ_PART_POSE = np.array([1, 3, 5, 7, 9, 11, 14, 16, 19, 22, 24])
 ##################################
 ##################################
 
+def convert_obj_part_mask_to_obj_mask(obj_part_mask):
+
+    obj_part_mask = np.array(obj_part_mask)
+    obj_mask = np.zeros((obj_part_mask.shape[0], obj_part_mask.shape[1]), dtype=np.uint8)
+
+    obj_part_ids = np.unique(obj_part_mask)[1:]
+    for obj_part_id in obj_part_ids:
+        obj_id = map_obj_part_id_to_obj_id(obj_part_id)
+        # print(f'obj_part_id:{obj_part_id}, obj_id:{obj_id}')
+        obj_mask_one = np.ones((obj_part_mask.shape[0], obj_part_mask.shape[1]), dtype=np.uint8)
+        obj_mask_one = obj_mask_one * obj_id
+        obj_mask = np.where(obj_part_mask==obj_part_id, obj_mask_one, obj_mask).astype(np.uint8)
+    # helper_utils.print_class_labels(obj_mask)
+    return obj_mask
+
+def convert_obj_part_mask_to_aff_mask(obj_part_mask):
+
+    obj_part_mask = np.array(obj_part_mask)
+    aff_mask = np.zeros((obj_part_mask.shape[0], obj_part_mask.shape[1]), dtype=np.uint8)
+
+    obj_part_ids = np.unique(obj_part_mask)[1:]
+    # obj_part_ids = np.flip(obj_part_ids)
+    for obj_part_id in obj_part_ids:
+        aff_id = map_obj_part_id_to_aff_id(obj_part_id)
+        # print(f'obj_part_id:{obj_part_id}, obj_id:{aff_id}')
+        aff_mask_one = np.ones((obj_part_mask.shape[0], obj_part_mask.shape[1]), dtype=np.uint8)
+        aff_mask_one = aff_mask_one * aff_id
+        aff_mask = np.where(obj_part_mask==obj_part_id, aff_mask_one, aff_mask).astype(np.uint8)
+    # helper_utils.print_class_labels(aff_mask)
+    return aff_mask
+
+##################################
+##################################
+
 def map_obj_id_to_name(object_id):
 
     if object_id == 1:          # 001_mallet
@@ -38,7 +72,7 @@ def map_obj_id_to_name(object_id):
     elif object_id == 11:       # 051_large_clamp
         return 'large_clamp'
     else:
-        print(f" --- Object ID:{object_id} does not map to Object Name --- ")
+        print(" --- Object ID does not map to Object Label --- ")
         exit(1)
 
 ##################################
@@ -72,34 +106,61 @@ def map_obj_id_to_obj_part_ids(object_id):
     elif object_id == 11:       # 051_large_clamp
         return [24, 25]
     else:
-        print(f" --- Object ID:{object_id} does not map to Object Part ID --- ")
+        print(" --- Object ID does not map to Object Part IDs --- ")
         exit(1)
 
-##################################
-##################################
+def map_obj_part_id_to_obj_id(obj_part_id):
 
-def map_aff_id_to_obj_id(aff_id):
-
-    if aff_id in [1, 3, 5, 7, 9, 11, 16, 19, 22]:  # grasp
+    if obj_part_id == 0:  # 001_mallet
+        return 0
+    elif obj_part_id in [1, 2]:          # 001_mallet
         return 1
-    elif aff_id in [8, 20]:                        # screw
+    elif obj_part_id in [3, 4]:        # 002_spatula
         return 2
-    elif aff_id in [6, 10]:                        # scoop
+    elif obj_part_id in [5, 6]:        # 003_wooden_spoon
         return 3
-    elif aff_id in [2]:                            # pound
+    elif obj_part_id in [7, 8]:        # 004_screwdriver
         return 4
-    elif aff_id in [4, 21]:                        # support
+    elif obj_part_id in [9, 10]:       # 005_garden_shovel
         return 5
-    elif aff_id in [23]:                           # cut
+    elif obj_part_id in [12, 11, 13]: # 019_pitcher_base
         return 6
-    elif aff_id in [12, 14, 17, 24]:               # wrap-grasp
+    elif obj_part_id in [14, 15]:     # 024_bowl
         return 7
-    elif aff_id in [13, 15, 18]:                   # contain
+    elif obj_part_id in [17, 16, 18]: # 025_mug
         return 8
-    elif aff_id in [25]:                           # clamp
+    elif obj_part_id in [21, 19, 20]: # 035_power_drill
+        return 9
+    elif obj_part_id in [22, 23]:     # 037_scissors
+        return 10
+    elif obj_part_id in [24, 25]:     # 051_large_clamp
+        return 11
+    else:
+        print(" --- Object Part ID does not map to Object ID --- ")
+        exit(1)
+
+def map_obj_part_id_to_aff_id(obj_part_id):
+
+    if obj_part_id in [1, 3, 5, 7, 9, 11, 16, 19, 22]:  # grasp
+        return 1
+    elif obj_part_id in [8, 20]:                        # screw
+        return 2
+    elif obj_part_id in [6, 10]:                        # scoop
+        return 3
+    elif obj_part_id in [2]:                            # pound
+        return 4
+    elif obj_part_id in [4, 21]:                        # support
+        return 5
+    elif obj_part_id in [23]:                           # cut
+        return 6
+    elif obj_part_id in [12, 14, 17, 24]:               # wrap-grasp
+        return 7
+    elif obj_part_id in [13, 15, 18]:                   # contain
+        return 8
+    elif obj_part_id in [25]:                           # clamp
         return 9
     else:
-        print(f" --- Affordance ID:{aff_id} does not map to Object ID --- ")
+        print(" --- Object Part ID does not map to Affordance ID --- ")
         exit(1)
 
 ##################################
@@ -138,6 +199,7 @@ def obj_color_map_dict():
 ##################################
 
 def obj_color_map(idx):
+    # print(f'idx:{idx}')
     ''' [red, blue, green]'''
 
     if idx == 1:

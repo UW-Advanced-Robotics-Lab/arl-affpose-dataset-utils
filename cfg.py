@@ -9,8 +9,8 @@ import numpy as np
 # ROOT_DIR_PATH = str(ROOT_DIR_PATH) + '/'
 ROOT_DIR_PATH = '/home/akeaveny/git/ARLAffPoseDatasetUtils/'
 
-ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
-# ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
+# ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
+ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
 
 RGB_EXT       = "_rgb.png"
 DEPTH_EXT     = "_depth.png"
@@ -18,6 +18,14 @@ LABEL_EXT     = "_labels.png"
 AFF_LABEL_EXT = "_aff_labels.png"
 POSE_EXT      = "_poses.yaml"
 META_EXT      = "_meta.mat"
+
+SYN_RGB_EXT            = ".png"
+SYN_DEPTH_EXT          = ".depth.mm.16.png"
+SYN_OBJ_PART_LABEL_EXT = ".cs.png"
+SYN_OBJ_LABEL_EXT      = "_obj_labels.png"
+SYN_AFF_LABEL_EXT      = "_aff_labels.png"
+SYN_JSON_EXT           = ".json"
+SYN_META_EXT           = "_meta.mat"
 
 #######################################
 # ZED CAMERA
@@ -96,6 +104,12 @@ SYN_SCENES = [
     'dr', # 4
     'dr', # 5
 ]
+
+#######################################
+# NDDS DIR
+#######################################
+
+NDDS_PATH = ROOT_DATA_PATH + 'NDDS/'
 
 #######################################
 # LabelFusion Log DIR
@@ -337,5 +351,6 @@ SORTED_OBJ_IDX = None
 
 LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs_arl_lab/' + LOG_FIlE
 LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset_arl_lab/' + LOG_FIlE
+
 # LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'LabelFusion/train/' + LOG_FIlE
 

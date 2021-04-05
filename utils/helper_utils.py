@@ -34,7 +34,3 @@ def print_class_labels(label):
     class_ids = np.unique(np.array(label, dtype=np.uint8))
     class_ids = class_ids[1:] # exclude the backgound
     print(f"Mask has {len(class_ids)} Labels: {class_ids}")
-
-######################
-# IMG UTILS
-######################
