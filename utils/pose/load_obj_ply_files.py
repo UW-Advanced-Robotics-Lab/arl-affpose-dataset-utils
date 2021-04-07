@@ -22,8 +22,8 @@ def load_obj_ply_files():
     # OG PLY
     ###################################
 
-    class_file = open(config.ROOT_DIR_PATH + 'object_meshes/classes.txt')
-    class_id_file = open(config.ROOT_DIR_PATH + 'object_meshes/classes_ids.txt')
+    class_file = open(config.CLASSES_FILE)
+    class_id_file = open(config.CLASS_IDS_FILE)
     class_IDs = np.loadtxt(class_id_file, dtype=np.int32)
 
     cld = {}
@@ -31,7 +31,7 @@ def load_obj_ply_files():
         class_input = class_file.readline()
         if not class_input:
             break
-        input_file = open(config.ROOT_DIR_PATH + 'object_meshes/models/{0}/densefusion/{0}.xyz'.format(class_input[:-1]))
+        input_file = open(config.ROOT_PATH + 'object_meshes/models/{0}/densefusion/{0}.xyz'.format(class_input[:-1]))
         cld[class_id] = []
         while 1:
             input_line = input_file.readline()
@@ -49,8 +49,8 @@ def load_obj_ply_files():
     # OBJECT CENTERED
     ###################################
 
-    class_obj_part_file = open(config.ROOT_DIR_PATH + 'object_meshes/obj_part_classes.txt')
-    class_obj_part_id_file = open(config.ROOT_DIR_PATH + 'object_meshes/obj_part_classes_ids.txt')
+    class_obj_part_file = open(config.CLASSES_FILE)
+    class_obj_part_id_file = open(config.OBJ_PART_CLASS_IDS_FILE)
     class_obj_part_IDs = np.loadtxt(class_obj_part_id_file, dtype=np.int32)
 
     cld_obj_centered = {}
@@ -58,7 +58,7 @@ def load_obj_ply_files():
         class_input = class_obj_part_file.readline()
         if not class_input:
             break
-        input_file = open(config.ROOT_DIR_PATH + 'object_meshes/models/{0}/densefusion/{0}_obj_centered.xyz'.format(
+        input_file = open(config.ROOT_PATH + 'object_meshes/models/{0}/densefusion/{0}_obj_centered.xyz'.format(
                 class_input[:-1]))
         cld_obj_centered[class_obj_part_id] = []
         while 1:
@@ -77,8 +77,8 @@ def load_obj_ply_files():
     # OBJECT PART CENTERED
     ###################################
 
-    class_obj_part_file = open(config.ROOT_DIR_PATH + 'object_meshes/obj_part_classes.txt')
-    class_obj_part_id_file = open(config.ROOT_DIR_PATH + 'object_meshes/obj_part_classes_ids.txt')
+    class_obj_part_file = open(config.CLASSES_FILE)
+    class_obj_part_id_file = open(config.OBJ_PART_CLASS_IDS_FILE)
     class_obj_part_IDs = np.loadtxt(class_obj_part_id_file, dtype=np.int32)
 
     cld_obj_part_centered = {}
@@ -86,7 +86,7 @@ def load_obj_ply_files():
         class_input = class_obj_part_file.readline()
         if not class_input:
             break
-        input_file = open(config.ROOT_DIR_PATH + 'object_meshes/models/{0}/densefusion/{0}_obj_part_centered.xyz'.format(class_input[:-1]))
+        input_file = open(config.ROOT_PATH + 'object_meshes/models/{0}/densefusion/{0}_obj_part_centered.xyz'.format(class_input[:-1]))
         cld_obj_part_centered[class_obj_part_id] = []
         while 1:
             input_line = input_file.readline()
@@ -104,14 +104,14 @@ def load_obj_ply_files():
     # CHECKING OBJECT PART LABELS
     ##################################
 
-    class_file = open(config.ROOT_DIR_PATH + 'object_meshes/classes.txt')
-    class_obj_part_file = open(config.ROOT_DIR_PATH + 'object_meshes/obj_part_classes.txt')
+    class_file = open(config.CLASSES_FILE)
+    class_obj_part_file = open(config.OBJ_PART_CLASSES_FILE)
     obj_classes = np.loadtxt(class_file, dtype=np.str)
     obj_part_classes = np.loadtxt(class_obj_part_file, dtype=np.str)
 
-    class_id_file = open(config.ROOT_DIR_PATH + 'object_meshes/classes_ids.txt')
+    class_id_file = open(config.CLASS_IDS_FILE)
     class_IDs = np.loadtxt(class_id_file, dtype=np.int32)
-    class_obj_part_id_file = open(config.ROOT_DIR_PATH + 'object_meshes/obj_part_classes_ids.txt')
+    class_obj_part_id_file = open(config.OBJ_PART_CLASS_IDS_FILE)
     class_obj_part_IDs = np.loadtxt(class_obj_part_id_file, dtype=np.int32)
 
     for class_ID in class_IDs:

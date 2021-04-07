@@ -1,13 +1,20 @@
 import numpy as np
 
 #######################################
-# AffPose Dataset Prelims
+# AffPose Prelims
 #######################################
 
-# from pathlib import Path
-# ROOT_DIR_PATH = Path(__file__).parent.absolute().resolve(strict=True)
-# ROOT_DIR_PATH = str(ROOT_DIR_PATH) + '/'
-ROOT_DIR_PATH = '/home/akeaveny/git/ARLAffPoseDatasetUtils/'
+ROOT_PATH = '/home/akeaveny/git/ARLAffPoseDatasetUtils/'
+
+CLASSES_FILE   = ROOT_PATH + 'object_meshes/classes.txt'
+CLASS_IDS_FILE = ROOT_PATH + 'object_meshes/classes_ids.txt'
+
+OBJ_PART_CLASSES_FILE   = ROOT_PATH + 'object_meshes/obj_part_classes.txt'
+OBJ_PART_CLASS_IDS_FILE = ROOT_PATH + 'object_meshes/obj_part_classes_ids.txt'
+
+#######################################
+# Dataset Prelims
+#######################################
 
 # ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
 ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
@@ -19,6 +26,8 @@ AFF_LABEL_EXT = "_aff_labels.png"
 POSE_EXT      = "_poses.yaml"
 META_EXT      = "_meta.mat"
 
+NDDS_PATH = ROOT_DATA_PATH + 'NDDS/'
+
 SYN_RGB_EXT            = ".png"
 SYN_DEPTH_EXT          = ".depth.mm.16.png"
 SYN_OBJ_PART_LABEL_EXT = ".cs.png"
@@ -26,6 +35,19 @@ SYN_OBJ_LABEL_EXT      = "_obj_labels.png"
 SYN_AFF_LABEL_EXT      = "_aff_labels.png"
 SYN_JSON_EXT           = ".json"
 SYN_META_EXT           = "_meta.mat"
+
+#######################################
+# Formatted Dataset Prelims
+#######################################
+
+FORMATTED_ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
+FORMATTED_DATASET_PATH = FORMATTED_ROOT_DATA_PATH + 'Syn'
+
+FORMATTED_RGB_EXT       = '.png'
+FORMATTED_DEPTH_EXT     = '_depth.png'
+FORMATTED_LABEL_EXT     = '_obj_label.png'
+FORMATTED_AFF_LABEL_EXT = '_aff_label.png'
+FORMATTED_META_EXT      = '_meta.mat'
 
 #######################################
 # ZED CAMERA
@@ -51,6 +73,7 @@ CAM_MAT = np.array([[CAM_FX, 0, CAM_CX], [0, CAM_FY, CAM_CY], [0, 0, 1]])
 CAM_DIST = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 
 #######################################
+# Random Configs
 #######################################
 
 OBJECTS = [
@@ -106,13 +129,7 @@ SYN_SCENES = [
 ]
 
 #######################################
-# NDDS DIR
-#######################################
-
-NDDS_PATH = ROOT_DATA_PATH + 'NDDS/'
-
-#######################################
-# LabelFusion Log DIR
+# LabelFusion: TRAIN
 #######################################
 
 ### bedroom_floor
@@ -267,7 +284,7 @@ NDDS_PATH = ROOT_DATA_PATH + 'NDDS/'
 # SORTED_OBJ_IDX = None
 
 #######################################
-# test logs
+# LabelFusion: TEST
 #######################################
 
 # LOG_FIlE = '000_household_commmon_area/images/'
@@ -307,7 +324,7 @@ NDDS_PATH = ROOT_DATA_PATH + 'NDDS/'
 # SORTED_OBJ_IDX = np.array([2, 0, 1])
 
 #######################################
-# ARL logs
+# LabelFusion: ARL
 #######################################
 
 # LOG_FIlE = '000_arl_lab_desk/images/'
