@@ -43,7 +43,7 @@ def main():
     ##################################
     ##################################
 
-    imgs_path = config.NDDS_PATH + "*/*/*/" + '??????' + config.SYN_RGB_EXT
+    imgs_path = config.NDDS_PATH + "7_dr_new/*/*/" + '??????' + config.SYN_RGB_EXT
     image_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(image_files)))
 
@@ -53,6 +53,8 @@ def main():
     # random_idx = np.random.choice(np.arange(0, int(len(image_files)), 1), size=int(num_files), replace=False)
     # image_files = np.array(image_files)[random_idx]
     # print("Selected Files: {}".format(len(image_files)))
+
+    image_files = np.array(image_files)[int(16111 + 588 + 19995):]
 
     for image_idx, image_addr in enumerate(image_files):
 

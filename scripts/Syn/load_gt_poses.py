@@ -33,21 +33,24 @@ def main():
     ##################################
     ##################################
 
-    imgs_path = config.NDDS_PATH + "*/*/*/" + '??????' + config.SYN_RGB_EXT
+    imgs_path = config.NDDS_PATH + "4_old_table/*/*/" + '??????' + config.SYN_RGB_EXT
     image_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(image_files)))
 
     # select random test images
-    np.random.seed(0)
-    num_files = 25
-    random_idx = np.random.choice(np.arange(0, int(len(image_files)), 1), size=int(num_files), replace=False)
-    image_files = np.array(image_files)[random_idx]
-    print("Selected Files: {}".format(len(image_files)))
+    # np.random.seed(0)
+    # num_files = 25
+    # random_idx = np.random.choice(np.arange(0, int(len(image_files)), 1), size=int(num_files), replace=False)
+    # image_files = np.array(image_files)[random_idx]
+    # print("Selected Files: {}".format(len(image_files)))
+
+    image_files = np.array(image_files)[int(9969):]
 
     for image_idx, image_addr in enumerate(image_files):
 
         image_addr = image_addr.split(config.SYN_RGB_EXT)[0]
-        print(f'\nimage_addr:{image_addr}')
+        str_num = image_addr.split('/')[-1]
+        print(f'\n{image_idx + 1}/{len(image_files)}, image_addr:{image_addr}')
 
         rgb_addr            = image_addr + config.SYN_RGB_EXT
         depth_addr          = image_addr + config.SYN_DEPTH_EXT
@@ -116,6 +119,8 @@ def main():
             object_part_y2, object_part_x2 = np.asarray(object_part['bounding_box']['bottom_right'])
             object_part_x1, object_part_y1, object_part_x2, object_part_y2 = \
                 int(object_part_x1), int(object_part_y1), int(object_part_x2), int(object_part_y2)
+
+
 
             x1, y1, x2, y2 = get_obj_bbox(label, object_id, config.HEIGHT, config.WIDTH, config.BORDER_LIST)
 

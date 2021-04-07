@@ -114,7 +114,7 @@ def main():
             obj_part_ids = affpose_dataset_utils.map_obj_id_to_obj_part_ids(obj_id)
             print(f'obj_part_ids:{obj_part_ids}')
             for obj_part_id in obj_part_ids:
-                aff_id = affpose_dataset_utils.map_aff_id_to_obj_id(obj_part_id)
+                aff_id = affpose_dataset_utils.map_obj_part_id_to_aff_id(obj_part_id)
                 print(f"\tAff: {aff_id}, {obj_part_classes[int(obj_part_id) - 1]}")
 
                 #######################################
