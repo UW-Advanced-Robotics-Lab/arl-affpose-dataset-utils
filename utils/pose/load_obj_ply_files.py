@@ -49,7 +49,7 @@ def load_obj_ply_files():
     # OBJECT CENTERED
     ###################################
 
-    class_obj_part_file = open(config.CLASSES_FILE)
+    class_obj_part_file = open(config.OBJ_PART_CLASSES_FILE)
     class_obj_part_id_file = open(config.OBJ_PART_CLASS_IDS_FILE)
     class_obj_part_IDs = np.loadtxt(class_obj_part_id_file, dtype=np.int32)
 
@@ -77,7 +77,7 @@ def load_obj_ply_files():
     # OBJECT PART CENTERED
     ###################################
 
-    class_obj_part_file = open(config.CLASSES_FILE)
+    class_obj_part_file = open(config.OBJ_PART_CLASSES_FILE)
     class_obj_part_id_file = open(config.OBJ_PART_CLASS_IDS_FILE)
     class_obj_part_IDs = np.loadtxt(class_obj_part_id_file, dtype=np.int32)
 

@@ -18,23 +18,46 @@ from utils.dataset import affpose_dataset_utils
 
 def main():
 
-    imgs_path = config.LABELFUSION_AFF_DATASET_PATH + "*" + config.RGB_EXT
+    imgs_path = config.ROOT_DATA_PATH + "dataset/*/*/*" + config.RGB_EXT
+    # imgs_path = config.LABELFUSION_AFF_DATASET_PATH + "*" + config.RGB_EXT
     img_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(img_files)))
 
+    # select random test images
+    np.random.seed(0)
+    num_files = 25
+    random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
+    img_files = np.array(img_files)[random_idx]
+    print("Chosen Files: {}".format(len(img_files)))
+
     for image_idx, image_addr in enumerate(img_files):
 
-        str_num = image_addr.split('/')[-1].split(config.RGB_EXT)[0]
+        file_path = image_addr.split(config.RGB_EXT)[0]
+        print(f'\nimage:{image_idx+1}/{len(img_files)}, file:{file_path}')
 
-        rgb_addr       = config.LABELFUSION_AFF_DATASET_PATH + str_num + config.RGB_EXT
-        depth_addr     = config.LABELFUSION_AFF_DATASET_PATH + str_num + config.DEPTH_EXT
-        label_addr     = config.LABELFUSION_AFF_DATASET_PATH + str_num + config.LABEL_EXT
-        aff_label_addr = config.LABELFUSION_AFF_DATASET_PATH + str_num + config.AFF_LABEL_EXT
+        rgb_addr       = file_path + config.RGB_EXT
+        depth_addr     = file_path + config.DEPTH_EXT
+        label_addr     = file_path + config.OBJ_LABEL_EXT
+        aff_label_addr = file_path + config.AFF_LABEL_EXT
 
         rgb       = np.array(Image.open(rgb_addr))
         depth     = np.array(Image.open(depth_addr))
         label     = np.array(Image.open(label_addr))
         aff_label = np.array(Image.open(aff_label_addr))
+
+        ##################################
+        ### RESIZE & CROP
+        ##################################
+
+        rgb = cv2.resize(rgb, config.RESIZE, interpolation=cv2.INTER_CUBIC)
+        depth = cv2.resize(depth, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+        label = cv2.resize(label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+        aff_label = cv2.resize(aff_label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+
+        rgb = helper_utils.crop(pil_img=rgb, crop_size=config.CROP_SIZE, is_img=True)
+        depth = helper_utils.crop(pil_img=depth, crop_size=config.CROP_SIZE)
+        label = helper_utils.crop(pil_img=label, crop_size=config.CROP_SIZE)
+        aff_label = helper_utils.crop(pil_img=aff_label, crop_size=config.CROP_SIZE)
 
         #####################
         # DEPTH INFO
@@ -54,11 +77,7 @@ def main():
         # PLOTTING
         #####################
 
-        rgb = cv2.resize(rgb, config.RESIZE)
-        depth = cv2.resize(depth, config.RESIZE)
-        label = cv2.resize(label, config.RESIZE)
         color_label = affpose_dataset_utils.colorize_aff_mask(label)
-        aff_label = cv2.resize(aff_label, config.RESIZE)
         color_aff_label = affpose_dataset_utils.colorize_aff_mask(aff_label)
 
         cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))

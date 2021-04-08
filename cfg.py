@@ -16,15 +16,16 @@ OBJ_PART_CLASS_IDS_FILE = ROOT_PATH + 'object_meshes/obj_part_classes_ids.txt'
 # Dataset Prelims
 #######################################
 
-# ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
-ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
+ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
+# ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
 
-RGB_EXT       = "_rgb.png"
-DEPTH_EXT     = "_depth.png"
-LABEL_EXT     = "_labels.png"
-AFF_LABEL_EXT = "_aff_labels.png"
-POSE_EXT      = "_poses.yaml"
-META_EXT      = "_meta.mat"
+RGB_EXT            = "_rgb.png"
+DEPTH_EXT          = "_depth.png"
+OBJ_LABEL_EXT      = "_labels.png"
+OBJ_PART_LABEL_EXT = "_obj_part_labels.png"
+AFF_LABEL_EXT      = "_aff_labels.png"
+POSE_EXT           = "_poses.yaml"
+META_EXT           = "_meta.mat"
 
 NDDS_PATH = ROOT_DATA_PATH + 'NDDS/'
 
@@ -41,13 +42,14 @@ SYN_META_EXT           = "_meta.mat"
 #######################################
 
 FORMATTED_ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
-FORMATTED_DATASET_PATH = FORMATTED_ROOT_DATA_PATH + 'Syn'
+FORMATTED_DATASET_PATH = FORMATTED_ROOT_DATA_PATH + 'Real'
 
-FORMATTED_RGB_EXT       = '.png'
-FORMATTED_DEPTH_EXT     = '_depth.png'
-FORMATTED_LABEL_EXT     = '_obj_label.png'
-FORMATTED_AFF_LABEL_EXT = '_aff_label.png'
-FORMATTED_META_EXT      = '_meta.mat'
+FORMATTED_RGB_EXT            = '.png'
+FORMATTED_DEPTH_EXT          = '_depth.png'
+FORMATTED_OBJ_LABEL_EXT      = '_obj_label.png'
+FORMATTED_OBJ_PART_LABEL_EXT = '_obj_part_labels.png'
+FORMATTED_AFF_LABEL_EXT      = '_aff_label.png'
+FORMATTED_META_EXT           = '_meta.mat'
 
 #######################################
 # ZED CAMERA
@@ -56,13 +58,21 @@ FORMATTED_META_EXT      = '_meta.mat'
 WIDTH, HEIGHT = 1280, 720
 ORIGINAL_SIZE = (WIDTH, HEIGHT)
 RESIZE        = (int(WIDTH/1), int(HEIGHT/1))
+CROP_SIZE     = (int(1280), int(720)) # (int(640), int(640))
+WIDTH, HEIGHT = CROP_SIZE[0], CROP_SIZE[1]
+MIN_SIZE = MAX_SIZE = 640
 
 _step = 40
 BORDER_LIST = np.arange(start=0, stop=np.max([WIDTH, HEIGHT])+_step, step=_step)
 
+X_SCALE = CROP_SIZE[0] / ORIGINAL_SIZE[0]
+Y_SCALE = CROP_SIZE[1] / ORIGINAL_SIZE[1]
+
 CAMERA_SCALE = 1000
 CAM_CX = 653.5618286132812
 CAM_CY = 338.541748046875
+# CAM_CX = 653.5618286132812 * X_SCALE
+# CAM_CY = 338.541748046875  * Y_SCALE
 CAM_FX = 682.7849731445312
 CAM_FY = 682.7849731445312
 
@@ -154,8 +164,8 @@ SYN_SCENES = [
 # LOG_FIlE = '030_household_bedroom_floor/images/'
 # SORTED_OBJ_IDX = np.array([1, 0, 2])
 
-# LOG_FIlE = '036_household_bedroom_floor/images/'
-# SORTED_OBJ_IDX = np.array([3, 0, 1, 2, 4])
+LOG_FIlE = '036_household_bedroom_floor/images/'
+SORTED_OBJ_IDX = np.array([3, 0, 1, 2, 4])
 
 # LOG_FIlE = '041_household_bedroom_floor/images/'
 # SORTED_OBJ_IDX = np.array([0, 1, 2, 3, 4]) # [1  2  8  9 11]
@@ -360,14 +370,14 @@ SYN_SCENES = [
 # LOG_FIlE = '010_arl_lab_floor/images/'
 # SORTED_OBJ_IDX = None
 
-LOG_FIlE = '011_arl_lab_bench_top/images/'
-SORTED_OBJ_IDX = None
+# LOG_FIlE = '011_arl_lab_bench_top/images/'
+# SORTED_OBJ_IDX = None
 
 #######################################
 #######################################
 
-LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs_arl_lab/' + LOG_FIlE
-LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset_arl_lab/' + LOG_FIlE
+LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs/' + LOG_FIlE
+LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset/' + LOG_FIlE
 
 # LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'LabelFusion/train/' + LOG_FIlE
 

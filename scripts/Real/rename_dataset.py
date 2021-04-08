@@ -30,7 +30,7 @@ new_data_path = config.ROOT_DATA_PATH + 'Real/'
 image_exts = [
             config.RGB_EXT,
             config.DEPTH_EXT,
-            config.LABEL_EXT,
+            config.OBJ_LABEL_EXT,
             config.AFF_LABEL_EXT,
             config.META_EXT
 ]
@@ -117,7 +117,7 @@ for image_ext in image_exts:
     #             print(f'New file: {move_file_name}')
     #         shutil.copyfile(old_file_name, move_file_name)
     #
-    #     elif image_ext == config.LABEL_EXT:
+    #     elif image_ext == config.OBJ_LABEL_EXT:
     #         move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + '_obj_label.png'
     #         if idx == 0:
     #             print(f'Old file: {old_file_name}')
@@ -161,7 +161,7 @@ for image_ext in image_exts:
     #         move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + '_aff_label.png'
     #         shutil.copyfile(old_file_name, move_file_name)
     #
-    #     elif image_ext == config.LABEL_EXT:
+    #     elif image_ext == config.OBJ_LABEL_EXT:
     #         move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + '_obj_label.png'
     #         shutil.copyfile(old_file_name, move_file_name)
     #
@@ -202,7 +202,7 @@ for image_ext in image_exts:
             move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + '_aff_label.png'
             shutil.copyfile(old_file_name, move_file_name)
 
-        elif image_ext == config.LABEL_EXT:
+        elif image_ext == config.OBJ_LABEL_EXT:
             move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + '_obj_label.png'
             shutil.copyfile(old_file_name, move_file_name)
 

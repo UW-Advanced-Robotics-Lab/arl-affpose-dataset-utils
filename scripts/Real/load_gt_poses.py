@@ -38,13 +38,21 @@ def main():
     img_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(img_files)))
 
+    # select random test images
+    # np.random.seed(0)
+    # num_files = 25
+    # random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
+    # img_files = np.array(img_files)[random_idx]
+    # print("Chosen Files: {}".format(len(img_files)))
+
     for image_idx, image_addr in enumerate(img_files):
 
         str_num = image_addr.split('/')[-1].split(config.RGB_EXT)[0]
+        print(f'\nimage:{image_idx+1}/{len(img_files)}, file:{image_addr}')
 
         rgb_addr   = config.LABELFUSION_LOG_PATH + str_num + config.RGB_EXT
         depth_addr = config.LABELFUSION_LOG_PATH + str_num + config.DEPTH_EXT
-        label_addr = config.LABELFUSION_LOG_PATH + str_num + config.LABEL_EXT
+        label_addr = config.LABELFUSION_LOG_PATH + str_num + config.OBJ_LABEL_EXT
 
         rgb      = np.array(Image.open(rgb_addr))
         depth    = np.array(Image.open(depth_addr))
