@@ -164,8 +164,8 @@ SYN_SCENES = [
 # LOG_FIlE = '030_household_bedroom_floor/images/'
 # SORTED_OBJ_IDX = np.array([1, 0, 2])
 
-LOG_FIlE = '036_household_bedroom_floor/images/'
-SORTED_OBJ_IDX = np.array([3, 0, 1, 2, 4])
+# LOG_FIlE = '036_household_bedroom_floor/images/'
+# SORTED_OBJ_IDX = np.array([3, 0, 1, 2, 4])
 
 # LOG_FIlE = '041_household_bedroom_floor/images/'
 # SORTED_OBJ_IDX = np.array([0, 1, 2, 3, 4]) # [1  2  8  9 11]
@@ -252,8 +252,8 @@ SORTED_OBJ_IDX = np.array([3, 0, 1, 2, 4])
 # LOG_FIlE = '027_household_kitchen_counter_top/images/' # [ 5  7  8  9 11]
 # SORTED_OBJ_IDX = np.array([4, 0, 1, 2, 3])
 
-# LOG_FIlE = '047_household_kitchen_counter_top/images/'
-# SORTED_OBJ_IDX = None
+LOG_FIlE = '047_household_kitchen_counter_top/images/'
+SORTED_OBJ_IDX = None
 
 ### household_kitchen_small_table
 # LOG_FIlE = '013_household_kitchen_small_table/images/'
