@@ -178,7 +178,7 @@ def main():
 
                 # drawing bbox = (x1, y1), (x2, y2)
                 cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (x1, y1), (x2, y2), (255, 0, 0), 2) # white
-                cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (obj_part_x1, obj_part_y1), (obj_part_x2, obj_part_y2), aff_color, 2)
+                # cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (obj_part_x1, obj_part_y1), (obj_part_x2, obj_part_y2), aff_color, 2)
 
                 cv2_obj_parts_img = cv2.putText(cv2_obj_parts_img,
                                                 affpose_dataset_utils.map_obj_id_to_name(obj_id),
@@ -217,7 +217,7 @@ def main():
         # PLOTTING
         #####################
 
-        color_label = affpose_dataset_utils.colorize_aff_mask(label)
+        color_label = affpose_dataset_utils.colorize_obj_mask(label)
         color_obj_part_label = affpose_dataset_utils.colorize_obj_mask(obj_part_label)
         color_aff_label = affpose_dataset_utils.colorize_aff_mask(aff_label)
 
