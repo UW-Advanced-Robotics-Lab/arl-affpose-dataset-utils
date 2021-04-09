@@ -45,10 +45,17 @@ def main():
     ##################################
     ##################################
 
-    # imgs_path = config.ROOT_DATA_PATH + "logs/*/*/*" + config.RGB_EXT
-    imgs_path = config.LABELFUSION_LOG_PATH + "*" + config.RGB_EXT
+    imgs_path = config.ROOT_DATA_PATH + "logs/*/*/*" + config.RGB_EXT
+    # imgs_path = config.LABELFUSION_LOG_PATH + "*" + config.RGB_EXT
     img_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(img_files)))
+
+    # select random test images
+    np.random.seed(1234)
+    num_files = 25
+    random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
+    img_files = np.array(img_files)[random_idx]
+    print("Chosen Files: {}".format(len(img_files)))
 
     for image_idx, image_addr in enumerate(img_files):
 
@@ -77,11 +84,13 @@ def main():
 
         yaml_addr = file_path + config.POSE_EXT
         obj_ids, obj_poses = load_obj_6dof_pose(yaml_addr)
+        sorted_obj_idx = np.arange(start=0, stop=len(obj_ids))
 
-        sorted_obj_idx = config.SORTED_OBJ_IDX
-        if sorted_obj_idx is None:
-            sorted_obj_idx = np.arange(start=0, stop=len(obj_ids))
-        obj_ids, obj_poses = obj_ids[sorted_obj_idx], obj_poses[:, :, sorted_obj_idx]
+        # sorted_obj_idx = config.SORTED_OBJ_IDX
+        # sorted_obj_idx = None
+        # if sorted_obj_idx is None:
+        #     sorted_obj_idx = np.arange(start=0, stop=len(obj_ids))
+        # obj_ids, obj_poses = obj_ids[sorted_obj_idx], obj_poses[:, :, sorted_obj_idx]
 
         #####################
         # affordances
@@ -103,7 +112,7 @@ def main():
 
         # for new affordances
         aff_label = np.zeros(shape=(label.shape))
-        obj_part_label = np.zeros(shape=(label.shape), dtype=np.uint8)
+        obj_part_label = np.zeros(shape=(label.shape))
 
         #######################################
         # TODO: meta
@@ -183,34 +192,25 @@ def main():
                 # OBJECT PART BBOX
                 #######################################
 
-                if obj_part_id in affpose_dataset_utils.PROJECT_POINT_CLOUD:
-                    obj_part_label = cv2.polylines(obj_part_label, np.int32([np.squeeze(imgpts)]), False, (obj_part_id))
-                else:
-                    max_row, max_col = label.shape
-                    imgpts = np.squeeze(imgpts)
-                    rows, cols = imgpts[:, 1], imgpts[:, 0]
-                    rows = np.clip(rows, 0, max_row - 1)
-                    cols = np.clip(cols, 0, max_col - 1)
-                    for row, col in zip(rows, cols):
-                        row, col = int(row), int(col)
-                        obj_part_label[row][col] = obj_part_id
+                obj_part_bbox_label = np.zeros(shape=(label.shape), dtype=np.uint8)
+                obj_part_bbox_label = cv2.polylines(obj_part_bbox_label, np.int32([np.squeeze(imgpts)]), False, (obj_part_id))
 
-                obj_part_x1, obj_part_y1, obj_part_x2, obj_part_y2 = get_obj_bbox(obj_part_label, obj_part_id, config.HEIGHT, config.WIDTH, config.BORDER_LIST)
+                obj_part_x1, obj_part_y1, obj_part_x2, obj_part_y2 = \
+                    get_obj_bbox(obj_part_bbox_label, obj_part_id, config.HEIGHT, config.WIDTH, config.BORDER_LIST)
 
                 #######################################
                 # AFF LABEL
                 #######################################
-                if obj_part_id in affpose_dataset_utils.REQUIRE_INSIDE_CONTOURS:
-                    res = cv2.findContours(obj_part_label.astype(np.uint8), cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-                    contours = res[-2]  # for cv2 v3 and v4+ compatibility
-                    aff_label = cv2.drawContours(aff_label, contours, contourIdx=-1, color=aff_id, thickness=-1)
-                    if obj_part_id == affpose_dataset_utils.REQUIRE_INSIDE_CONTOURS[0]: # spatula
-                        aff_label = cv2.drawContours(aff_label, contours, contourIdx=-1, color=aff_id, thickness=2)
-                else:
-                    res = cv2.findContours(obj_part_label.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-                    contours = res[-2]  # for cv2 v3 and v4+ compatibility
-                    aff_label = cv2.drawContours(aff_label, contours, contourIdx=-1, color=aff_id, thickness=-1)
-                    aff_label = cv2.fillPoly(aff_label, contours, color=aff_id)
+
+                mask_label = np.ma.getmaskarray(np.ma.masked_equal(label, obj_id))
+                mask_obj_part_label = np.ma.getmaskarray(np.ma.masked_equal(obj_part_bbox_label, obj_part_id))
+                mask_aff_label = mask_label * mask_obj_part_label
+
+                res = cv2.findContours(mask_aff_label.astype(np.uint8), cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+                contours = res[-2]  # for cv2 v3 and v4+ compatibility
+
+                aff_label = cv2.drawContours(aff_label, contours, contourIdx=-1, color=aff_id, thickness=-1)
+                obj_part_label = cv2.drawContours(obj_part_label, contours, contourIdx=-1, color=obj_part_id, thickness=-1)
 
                 #######################################
                 # Using PNP RANSAC to get new SE(3) matrix
@@ -317,25 +317,25 @@ def main():
         # PLOTTING
         #####################
 
-        # rgb               = cv2.resize(rgb, config.RESIZE)
-        # depth             = cv2.resize(depth, config.RESIZE)
-        # label             = cv2.resize(label, config.RESIZE)
-        # color_label       = affpose_dataset_utils.colorize_obj_mask(label)
-        # aff_label         = cv2.resize(aff_label, config.RESIZE)
-        # color_aff_label   = affpose_dataset_utils.colorize_aff_mask(aff_label)
-        # cv2_obj_img       = cv2.resize(cv2_obj_img, config.RESIZE)
-        # cv2_obj_parts_img = cv2.resize(cv2_obj_parts_img, config.RESIZE)
-        #
-        # cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
-        # cv2.imshow('depth', depth)
-        # cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
-        # cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
-        # cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
-        # cv2.imshow('obj_part_label', obj_part_label*25)
-        # cv2.imshow('gt_obj_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
-        # cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))
-        #
-        # cv2.waitKey(0)
+        rgb               = cv2.resize(rgb, config.RESIZE)
+        depth             = cv2.resize(depth, config.RESIZE)
+        label             = cv2.resize(label, config.RESIZE)
+        color_label       = affpose_dataset_utils.colorize_obj_mask(label)
+        aff_label         = cv2.resize(aff_label, config.RESIZE)
+        color_aff_label   = affpose_dataset_utils.colorize_aff_mask(aff_label)
+        cv2_obj_img       = cv2.resize(cv2_obj_img, config.RESIZE)
+        cv2_obj_parts_img = cv2.resize(cv2_obj_parts_img, config.RESIZE)
+
+        cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
+        cv2.imshow('depth', depth)
+        cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
+        cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
+        cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
+        cv2.imshow('obj_part_label', obj_part_label*25)
+        cv2.imshow('gt_obj_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
+        cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))
+
+        cv2.waitKey(0)
 
 if __name__ == '__main__':
     main()

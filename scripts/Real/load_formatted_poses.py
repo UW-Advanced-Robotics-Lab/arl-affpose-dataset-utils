@@ -43,11 +43,11 @@ def main():
     print('Loaded {} Images'.format(len(img_files)))
 
     # select random test images
-    # np.random.seed(0)
-    # num_files = 25
-    # random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
-    # img_files = np.array(img_files)[random_idx]
-    # print("Chosen Files: {}".format(len(img_files)))
+    np.random.seed(1234)
+    num_files = 25
+    random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
+    img_files = np.array(img_files)[random_idx]
+    print("Chosen Files: {}".format(len(img_files)))
 
     for image_idx, image_addr in enumerate(img_files):
 
@@ -187,7 +187,7 @@ def main():
                                                 0.4,
                                                 (255, 255, 255)) # red
 
-                if aff_id == 1 or aff_id == 7:
+                if obj_part_id in affpose_dataset_utils.DRAW_OBJ_PART_POSE:
                     # draw pose
                     rotV, _ = cv2.Rodrigues(obj_part_r)
                     points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
@@ -221,7 +221,7 @@ def main():
         cv2.imshow('depth', depth)
         cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
         cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
-        cv2.imshow('obj_part_label', obj_part_label*50)
+        cv2.imshow('obj_part_label', obj_part_label*25)
         cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_obj_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))

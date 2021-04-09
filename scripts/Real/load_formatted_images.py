@@ -24,7 +24,7 @@ def main():
     print('Loaded {} Images'.format(len(img_files)))
 
     # select random test images
-    np.random.seed(0)
+    np.random.seed(1234)
     num_files = 25
     random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
     img_files = np.array(img_files)[random_idx]
@@ -38,26 +38,30 @@ def main():
         rgb_addr       = file_path + config.RGB_EXT
         depth_addr     = file_path + config.DEPTH_EXT
         label_addr     = file_path + config.OBJ_LABEL_EXT
+        obj_part_label_addr = file_path + config.OBJ_PART_LABEL_EXT
         aff_label_addr = file_path + config.AFF_LABEL_EXT
 
         rgb       = np.array(Image.open(rgb_addr))
         depth     = np.array(Image.open(depth_addr))
         label     = np.array(Image.open(label_addr))
+        obj_part_label  = np.array(Image.open(obj_part_label_addr))
         aff_label = np.array(Image.open(aff_label_addr))
 
         ##################################
         ### RESIZE & CROP
         ##################################
 
-        rgb = cv2.resize(rgb, config.RESIZE, interpolation=cv2.INTER_CUBIC)
-        depth = cv2.resize(depth, config.RESIZE, interpolation=cv2.INTER_NEAREST)
-        label = cv2.resize(label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
-        aff_label = cv2.resize(aff_label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
-
-        rgb = helper_utils.crop(pil_img=rgb, crop_size=config.CROP_SIZE, is_img=True)
-        depth = helper_utils.crop(pil_img=depth, crop_size=config.CROP_SIZE)
-        label = helper_utils.crop(pil_img=label, crop_size=config.CROP_SIZE)
-        aff_label = helper_utils.crop(pil_img=aff_label, crop_size=config.CROP_SIZE)
+        # rgb = cv2.resize(rgb, config.RESIZE, interpolation=cv2.INTER_CUBIC)
+        # depth = cv2.resize(depth, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+        # label = cv2.resize(label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+        # obj_part_label = cv2.resize(obj_part_label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+        # aff_label = cv2.resize(aff_label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+        #
+        # rgb = helper_utils.crop(pil_img=rgb, crop_size=config.CROP_SIZE, is_img=True)
+        # depth = helper_utils.crop(pil_img=depth, crop_size=config.CROP_SIZE)
+        # label = helper_utils.crop(pil_img=label, crop_size=config.CROP_SIZE)
+        # obj_part_label = helper_utils.crop(pil_img=obj_part_label, crop_size=config.CROP_SIZE)
+        # aff_label = helper_utils.crop(pil_img=aff_label, crop_size=config.CROP_SIZE)
 
         #####################
         # DEPTH INFO
@@ -71,19 +75,21 @@ def main():
         #####################
 
         helper_utils.print_class_labels(label)
+        helper_utils.print_class_labels(obj_part_label)
         helper_utils.print_class_labels(aff_label)
 
         #####################
         # PLOTTING
         #####################
 
-        color_label = affpose_dataset_utils.colorize_aff_mask(label)
+        color_label = affpose_dataset_utils.colorize_obj_mask(label)
         color_aff_label = affpose_dataset_utils.colorize_aff_mask(aff_label)
 
         cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
         cv2.imshow('depth', depth)
         cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
-        cv2.imshow('color_label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
+        cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
+        cv2.imshow('obj_part_label', obj_part_label*25)
         cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
 
         cv2.waitKey(0)

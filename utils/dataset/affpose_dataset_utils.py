@@ -4,10 +4,6 @@ import numpy as np
 # OBJECT CONFIGS
 #######################################
 
-PROJECT_POINT_CLOUD = np.array([1, 2, 3, 5, 6, 7, 8, 9, 10])
-
-REQUIRE_INSIDE_CONTOURS = np.array([4, 22, 25]) # 4 - spatula head, 22 - scissors grasp, 25 - large clamp clamp
-
 DRAW_OBJ_PART_POSE = np.array([1, 3, 5, 7, 9, 11, 14, 16, 19, 22, 24])
 
 ##################################
