@@ -1,5 +1,7 @@
 import numpy as np
 
+from utils import helper_utils
+
 #######################################
 # OBJECT CONFIGS
 #######################################
@@ -18,11 +20,11 @@ def convert_obj_part_mask_to_obj_mask(obj_part_mask):
     # obj_part_ids = np.flip(obj_part_ids)
     for obj_part_id in obj_part_ids:
         obj_id = map_obj_part_id_to_obj_id(obj_part_id)
-        # print(f'obj_part_id:{obj_part_id}, obj_id:{aff_id}')
+        # print(f'obj_part_id:{obj_part_id}, obj_id:{obj_id}')
         aff_mask_one = np.ones((obj_part_mask.shape[0], obj_part_mask.shape[1]), dtype=np.uint8)
         aff_mask_one = aff_mask_one * obj_id
         obj_mask = np.where(obj_part_mask==obj_part_id, aff_mask_one, obj_mask).astype(np.uint8)
-    # helper_utils.print_class_labels(aff_mask)
+    # helper_utils.print_class_labels(obj_mask)
     return obj_mask
 
 def convert_obj_part_mask_to_aff_mask(obj_part_mask):

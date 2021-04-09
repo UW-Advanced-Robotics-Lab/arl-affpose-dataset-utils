@@ -24,11 +24,11 @@ def main():
     print('Loaded {} Images'.format(len(img_files)))
 
     # select random test images
-    np.random.seed(1234)
-    num_files = 25
-    random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
-    img_files = np.array(img_files)[random_idx]
-    print("Chosen Files: {}".format(len(img_files)))
+    # np.random.seed(1234)
+    # num_files = 25
+    # random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
+    # img_files = np.array(img_files)[random_idx]
+    # print("Chosen Files: {}".format(len(img_files)))
 
     for image_idx, image_addr in enumerate(img_files):
 
@@ -76,6 +76,8 @@ def main():
 
         helper_utils.print_class_labels(label)
         helper_utils.print_class_labels(obj_part_label)
+        obj_part_label = affpose_dataset_utils.convert_obj_part_mask_to_obj_mask(obj_part_label)
+        helper_utils.print_class_labels(obj_part_label)
         helper_utils.print_class_labels(aff_label)
 
         #####################
@@ -83,13 +85,14 @@ def main():
         #####################
 
         color_label = affpose_dataset_utils.colorize_obj_mask(label)
+        color_obj_part_label = affpose_dataset_utils.colorize_obj_mask(obj_part_label)
         color_aff_label = affpose_dataset_utils.colorize_aff_mask(aff_label)
 
         cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
         cv2.imshow('depth', depth)
         cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
         cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
-        cv2.imshow('obj_part_label', obj_part_label*25)
+        cv2.imshow('obj_part_label', cv2.cvtColor(color_obj_part_label, cv2.COLOR_BGR2RGB))
         cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
 
         cv2.waitKey(0)

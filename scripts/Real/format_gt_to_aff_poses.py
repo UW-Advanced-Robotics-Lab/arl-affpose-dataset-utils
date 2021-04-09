@@ -51,11 +51,11 @@ def main():
     print('Loaded {} Images'.format(len(img_files)))
 
     # select random test images
-    np.random.seed(1234)
-    num_files = 25
-    random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
-    img_files = np.array(img_files)[random_idx]
-    print("Chosen Files: {}".format(len(img_files)))
+    # np.random.seed(1234)
+    # num_files = 25
+    # random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
+    # img_files = np.array(img_files)[random_idx]
+    # print("Chosen Files: {}".format(len(img_files)))
 
     for image_idx, image_addr in enumerate(img_files):
 
@@ -95,7 +95,7 @@ def main():
         #####################
         # affordances
         #####################
-
+        LABELFUSION_AFF_DATASET_FOLDER = config.ROOT_DATA_PATH + 'dataset/' + str_folder + '/images/'
         LABELFUSION_AFF_DATASET_PATH = config.ROOT_DATA_PATH + 'dataset/' + str_folder + '/images/' + str_num
 
         aff_rgb_addr            = LABELFUSION_AFF_DATASET_PATH + config.RGB_EXT
@@ -105,10 +105,8 @@ def main():
         aff_aff_label_addr      = LABELFUSION_AFF_DATASET_PATH + config.AFF_LABEL_EXT
         aff_meta_addr           = LABELFUSION_AFF_DATASET_PATH + config.META_EXT
 
-        strings = np.str(LABELFUSION_AFF_DATASET_PATH).split(' /')
-        new_aff_dir = '/'.join(strings[:-1]) + '/'
-        if not os.path.exists(new_aff_dir):
-            os.makedirs(new_aff_dir)
+        if not os.path.exists(LABELFUSION_AFF_DATASET_FOLDER):
+            os.makedirs(LABELFUSION_AFF_DATASET_FOLDER)
 
         # for new affordances
         aff_label = np.zeros(shape=(label.shape))
@@ -125,7 +123,7 @@ def main():
         #######################################
 
         for idx, obj_id in enumerate(obj_ids):
-            print("Object:", obj_classes[int(obj_id) - 1])
+            print(f"Object: {obj_id}, {obj_classes[int(obj_id) - 1]}")
 
             #######################################
             # OBJECT
@@ -236,8 +234,8 @@ def main():
                 # print(f'\tobject_id_cld_2D:{len(object_id_cld_2D)}, object_id_cld_3D:{len(object_id_cld_3D)}')
 
                 obj_rvec, _ = cv2.Rodrigues(obj_r)
-                # _, rvec, tvec, inliers = cv2.solvePnPRansac(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
-                _, rvec, tvec = cv2.solvePnP(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
+                _, rvec, tvec, inliers = cv2.solvePnPRansac(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
+                # _, rvec, tvec = cv2.solvePnP(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
                                              cameraMatrix=config.CAM_MAT, distCoeffs=config.CAM_DIST,
                                              rvec=obj_rvec,
                                              tvec=obj_t,
@@ -311,31 +309,36 @@ def main():
         #####################
 
         helper_utils.print_class_labels(label)
+        helper_utils.print_class_labels(obj_part_label)
+        obj_part_label = affpose_dataset_utils.convert_obj_part_mask_to_obj_mask(obj_part_label)
+        helper_utils.print_class_labels(obj_part_label)
         helper_utils.print_class_labels(aff_label)
 
         #####################
         # PLOTTING
         #####################
 
-        rgb               = cv2.resize(rgb, config.RESIZE)
-        depth             = cv2.resize(depth, config.RESIZE)
-        label             = cv2.resize(label, config.RESIZE)
-        color_label       = affpose_dataset_utils.colorize_obj_mask(label)
-        aff_label         = cv2.resize(aff_label, config.RESIZE)
-        color_aff_label   = affpose_dataset_utils.colorize_aff_mask(aff_label)
-        cv2_obj_img       = cv2.resize(cv2_obj_img, config.RESIZE)
-        cv2_obj_parts_img = cv2.resize(cv2_obj_parts_img, config.RESIZE)
-
-        cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
-        cv2.imshow('depth', depth)
-        cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
-        cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
-        cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
-        cv2.imshow('obj_part_label', obj_part_label*25)
-        cv2.imshow('gt_obj_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
-        cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))
-
-        cv2.waitKey(0)
+        # rgb               = cv2.resize(rgb, config.RESIZE)
+        # depth             = cv2.resize(depth, config.RESIZE)
+        # label             = cv2.resize(label, config.RESIZE)
+        # color_label       = affpose_dataset_utils.colorize_obj_mask(label)
+        # obj_part_label    = cv2.resize(obj_part_label, config.RESIZE)
+        # color_obj_part_label = affpose_dataset_utils.colorize_obj_mask(obj_part_label)
+        # aff_label         = cv2.resize(aff_label, config.RESIZE)
+        # color_aff_label   = affpose_dataset_utils.colorize_aff_mask(aff_label)
+        # cv2_obj_img       = cv2.resize(cv2_obj_img, config.RESIZE)
+        # cv2_obj_parts_img = cv2.resize(cv2_obj_parts_img, config.RESIZE)
+        #
+        # cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('depth', depth)
+        # cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
+        # cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('obj_part_label', cv2.cvtColor(color_obj_part_label, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('gt_obj_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))
+        #
+        # cv2.waitKey(0)
 
 if __name__ == '__main__':
     main()
