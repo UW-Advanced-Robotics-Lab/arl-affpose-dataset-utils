@@ -96,7 +96,7 @@ def main():
         aff_aff_label_addr      = LABELFUSION_AFF_DATASET_PATH + config.AFF_LABEL_EXT
         aff_meta_addr           = LABELFUSION_AFF_DATASET_PATH + config.META_EXT
 
-        strings = np.str(LABELFUSION_AFF_DATASET_PATH).split('/')
+        strings = np.str(LABELFUSION_AFF_DATASET_PATH).split(' /')
         new_aff_dir = '/'.join(strings[:-1]) + '/'
         if not os.path.exists(new_aff_dir):
             os.makedirs(new_aff_dir)
@@ -116,8 +116,6 @@ def main():
         #######################################
 
         for idx, obj_id in enumerate(obj_ids):
-            ####################
-            ####################
             print("Object:", obj_classes[int(obj_id) - 1])
 
             #######################################

@@ -30,8 +30,9 @@ new_data_path = config.ROOT_DATA_PATH + 'Syn/'
 image_exts = [
             config.SYN_RGB_EXT,
             config.SYN_DEPTH_EXT,
-            config.SYN_AFF_LABEL_EXT,
             config.SYN_OBJ_LABEL_EXT,
+            config.SYN_OBJ_PART_LABEL_EXT,
+            config.SYN_AFF_LABEL_EXT,
             config.SYN_META_EXT,
 ]
 
@@ -96,35 +97,42 @@ for image_ext in image_exts:
         image_num = str(count)[1:]
 
         if image_ext == config.SYN_RGB_EXT:
-            move_file_name = new_file_name + 'rgb/' + np.str(image_num) + '.png'
+            move_file_name = new_file_name + 'rgb/' + np.str(image_num) + config.FORMATTED_RGB_EXT
             if idx == 0:
                 print(f'Old file: {old_file_name}')
                 print(f'New file: {move_file_name}')
             shutil.copyfile(old_file_name, move_file_name)
 
         elif image_ext == config.SYN_DEPTH_EXT:
-            move_file_name = new_file_name + 'depth/' + np.str(image_num) + '_depth.png'
-            if idx == 0:
-                print(f'Old file: {old_file_name}')
-                print(f'New file: {move_file_name}')
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.SYN_AFF_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + '_aff_label.png'
+            move_file_name = new_file_name + 'depth/' + np.str(image_num) + config.FORMATTED_DEPTH_EXT
             if idx == 0:
                 print(f'Old file: {old_file_name}')
                 print(f'New file: {move_file_name}')
             shutil.copyfile(old_file_name, move_file_name)
 
         elif image_ext == config.SYN_OBJ_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + '_obj_label.png'
+            move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + config.FORMATTED_OBJ_LABEL_EXT
+            if idx == 0:
+                print(f'Old file: {old_file_name}')
+                print(f'New file: {move_file_name}')
+            shutil.copyfile(old_file_name, move_file_name)
+            
+        elif image_ext == config.SYN_OBJ_PART_LABEL_EXT:
+            move_file_name = new_file_name + 'masks_obj_part/' + np.str(image_num) + config.FORMATTED_OBJ_PART_LABEL_EXT
+            if idx == 0:
+                print(f'Old file: {old_file_name}')
+                print(f'New file: {move_file_name}')
+            shutil.copyfile(old_file_name, move_file_name)
+
+        elif image_ext == config.SYN_AFF_LABEL_EXT:
+            move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + config.FORMATTED_AFF_LABEL_EXT
             if idx == 0:
                 print(f'Old file: {old_file_name}')
                 print(f'New file: {move_file_name}')
             shutil.copyfile(old_file_name, move_file_name)
 
         elif image_ext == config.SYN_META_EXT:
-            move_file_name = new_file_name + 'meta/' + np.str(image_num) + '_meta.mat'
+            move_file_name = new_file_name + 'meta/' + np.str(image_num) + config.FORMATTED_META_EXT
             if idx == 0:
                 print(f'Old file: {old_file_name}')
                 print(f'New file: {move_file_name}')
@@ -149,23 +157,27 @@ for image_ext in image_exts:
         image_num = str(count)[1:]
 
         if image_ext == config.SYN_RGB_EXT:
-            move_file_name = new_file_name + 'rgb/' + np.str(image_num) + '.png'
+            move_file_name = new_file_name + 'rgb/' + np.str(image_num) + config.FORMATTED_RGB_EXT
             shutil.copyfile(old_file_name, move_file_name)
 
         elif image_ext == config.SYN_DEPTH_EXT:
-            move_file_name = new_file_name + 'depth/' + np.str(image_num) + '_depth.png'
+            move_file_name = new_file_name + 'depth/' + np.str(image_num) + config.FORMATTED_DEPTH_EXT
+            shutil.copyfile(old_file_name, move_file_name)
+            
+        elif image_ext == config.SYN_OBJ_LABEL_EXT:
+            move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + config.FORMATTED_OBJ_LABEL_EXT
+            shutil.copyfile(old_file_name, move_file_name)
+        
+        elif image_ext == config.SYN_OBJ_PART_LABEL_EXT:
+            move_file_name = new_file_name + 'masks_obj_part/' + np.str(image_num) + config.FORMATTED_OBJ_PART_LABEL_EXT
             shutil.copyfile(old_file_name, move_file_name)
 
         elif image_ext == config.SYN_AFF_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + '_aff_label.png'
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.SYN_OBJ_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + '_obj_label.png'
+            move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + config.FORMATTED_AFF_LABEL_EXT
             shutil.copyfile(old_file_name, move_file_name)
 
         elif image_ext == config.SYN_META_EXT:
-            move_file_name = new_file_name + 'meta/' + np.str(image_num) + '_meta.mat'
+            move_file_name = new_file_name + 'meta/' + np.str(image_num) + config.FORMATTED_META_EXT
             shutil.copyfile(old_file_name, move_file_name)
 
         else:
@@ -187,26 +199,27 @@ for image_ext in image_exts:
         image_num = str(count)[1:]
 
         if image_ext == config.SYN_RGB_EXT:
-            move_file_name = new_file_name + 'rgb/' + np.str(image_num) + '.png'
-            if idx == 0:
-                print(f'Old file: {old_file_name}')
-                print(f'New file: {move_file_name}')
+            move_file_name = new_file_name + 'rgb/' + np.str(image_num) + config.FORMATTED_RGB_EXT
             shutil.copyfile(old_file_name, move_file_name)
 
         elif image_ext == config.SYN_DEPTH_EXT:
-            move_file_name = new_file_name + 'depth/' + np.str(image_num) + '_depth.png'
+            move_file_name = new_file_name + 'depth/' + np.str(image_num) + config.FORMATTED_DEPTH_EXT
+            shutil.copyfile(old_file_name, move_file_name)
+            
+        elif image_ext == config.SYN_OBJ_LABEL_EXT:
+            move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + config.FORMATTED_OBJ_LABEL_EXT
+            shutil.copyfile(old_file_name, move_file_name)
+        
+        elif image_ext == config.SYN_OBJ_PART_LABEL_EXT:
+            move_file_name = new_file_name + 'masks_obj_part/' + np.str(image_num) + config.FORMATTED_OBJ_PART_LABEL_EXT
             shutil.copyfile(old_file_name, move_file_name)
 
         elif image_ext == config.SYN_AFF_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + '_aff_label.png'
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.SYN_OBJ_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + '_obj_label.png'
+            move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + config.FORMATTED_AFF_LABEL_EXT
             shutil.copyfile(old_file_name, move_file_name)
 
         elif image_ext == config.SYN_META_EXT:
-            move_file_name = new_file_name + 'meta/' + np.str(image_num) + '_meta.mat'
+            move_file_name = new_file_name + 'meta/' + np.str(image_num) + config.FORMATTED_META_EXT
             shutil.copyfile(old_file_name, move_file_name)
 
         else:

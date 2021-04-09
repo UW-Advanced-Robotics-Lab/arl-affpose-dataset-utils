@@ -16,8 +16,8 @@ OBJ_PART_CLASS_IDS_FILE = ROOT_PATH + 'object_meshes/obj_part_classes_ids.txt'
 # Dataset Prelims
 #######################################
 
-ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
-# ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
+# ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
+ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
 
 RGB_EXT            = "_rgb.png"
 DEPTH_EXT          = "_depth.png"

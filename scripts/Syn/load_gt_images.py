@@ -8,6 +8,13 @@ import matplotlib.pyplot as plt
 #######################################
 #######################################
 
+import sys
+sys.path.append('../..')
+# print(sys.path)
+
+#######################################
+#######################################
+
 import cfg as config
 
 from utils import helper_utils
@@ -31,13 +38,13 @@ def main():
 
     for image_idx, image_addr in enumerate(image_files):
 
-        image_addr = image_addr.split(config.SYN_RGB_EXT)[0]
-        str_num = image_addr.split('/')[-1]
-        print(f'\n{image_idx + 1}/{len(image_files)}, image_addr:{image_addr}')
+        file_path = image_addr.split(config.SYN_RGB_EXT)[0]
+        str_num = file_path.split('/')[-1]
+        print(f'\n{image_idx + 1}/{len(image_files)}, image_addr:{file_path}')
 
-        rgb_addr            = image_addr + config.SYN_RGB_EXT
-        depth_addr          = image_addr + config.SYN_DEPTH_EXT
-        obj_part_label_addr = image_addr + config.SYN_OBJ_PART_LABEL_EXT
+        rgb_addr            = file_path + config.SYN_RGB_EXT
+        depth_addr          = file_path + config.SYN_DEPTH_EXT
+        obj_part_label_addr = file_path + config.SYN_OBJ_PART_LABEL_EXT
 
         rgb            = np.array(Image.open(rgb_addr))
         depth          = np.array(Image.open(depth_addr))

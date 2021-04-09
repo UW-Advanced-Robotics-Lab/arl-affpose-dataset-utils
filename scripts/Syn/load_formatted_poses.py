@@ -1,7 +1,5 @@
 import glob
-import copy
-import random
-
+import json
 import numpy as np
 
 import cv2
@@ -37,34 +35,34 @@ def main():
     ##################################
     ##################################
 
-    imgs_path = config.ROOT_DATA_PATH + "dataset/*/*/*" + config.RGB_EXT
-    # imgs_path = config.LABELFUSION_AFF_DATASET_PATH + "*" + config.RGB_EXT
-    img_files = sorted(glob.glob(imgs_path))
-    print('Loaded {} Images'.format(len(img_files)))
+    imgs_path = config.NDDS_PATH + "*/*/*/" + '??????' + config.SYN_RGB_EXT
+    image_files = sorted(glob.glob(imgs_path))
+    print('Loaded {} Images'.format(len(image_files)))
 
     # select random test images
-    # np.random.seed(0)
-    # num_files = 25
-    # random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
-    # img_files = np.array(img_files)[random_idx]
-    # print("Chosen Files: {}".format(len(img_files)))
+    np.random.seed(0)
+    num_files = 25
+    random_idx = np.random.choice(np.arange(0, int(len(image_files)), 1), size=int(num_files), replace=False)
+    image_files = np.array(image_files)[random_idx]
+    print("Selected Files: {}".format(len(image_files)))
 
-    for image_idx, image_addr in enumerate(img_files):
+    for image_idx, image_addr in enumerate(image_files):
 
-        file_path = image_addr.split(config.RGB_EXT)[0]
-        print(f'\nimage:{image_idx+1}/{len(img_files)}, file:{file_path}')
+        file_path = image_addr.split(config.SYN_RGB_EXT)[0]
+        str_num = file_path.split('/')[-1]
+        print(f'\n{image_idx + 1}/{len(image_files)}, image_addr:{file_path}')
 
-        rgb_addr            = file_path + config.RGB_EXT
-        depth_addr          = file_path + config.DEPTH_EXT
-        label_addr          = file_path + config.OBJ_LABEL_EXT
-        obj_part_label_addr = file_path + config.OBJ_PART_LABEL_EXT
-        aff_label_addr      = file_path + config.AFF_LABEL_EXT
+        rgb_addr            = file_path + config.SYN_RGB_EXT
+        depth_addr          = file_path + config.SYN_DEPTH_EXT
+        obj_label_addr      = file_path + config.SYN_OBJ_LABEL_EXT
+        obj_part_label_addr = file_path + config.SYN_OBJ_PART_LABEL_EXT
+        aff_label_addr      = file_path + config.SYN_AFF_LABEL_EXT
 
-        rgb             = np.array(Image.open(rgb_addr))
-        depth           = np.array(Image.open(depth_addr))
-        label           = np.array(Image.open(label_addr))
-        obj_part_label  = np.array(Image.open(obj_part_label_addr))
-        aff_label       = np.array(Image.open(aff_label_addr))
+        rgb            = np.array(Image.open(rgb_addr))
+        depth          = np.array(Image.open(depth_addr))
+        label          = np.array(Image.open(obj_label_addr))
+        obj_part_label = np.array(Image.open(obj_part_label_addr))
+        aff_label      = np.array(Image.open(aff_label_addr))
 
         ##################################
         # RESIZE & CROP
@@ -103,11 +101,10 @@ def main():
         #######################################
 
         for idx, obj_id in enumerate(obj_ids):
-            ####################
-            ####################
             print("Object:", obj_classes[int(obj_id) - 1])
 
             #######################################
+            # OBJECT
             #######################################
             obj_color = affpose_dataset_utils.obj_color_map(obj_id)
 
@@ -152,23 +149,14 @@ def main():
                 rotV, _ = cv2.Rodrigues(obj_r)
                 points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
                 axisPoints, _ = cv2.projectPoints(points, rotV, obj_t * 1e3, config.CAM_MAT, config.CAM_DIST)
-                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()),(0, 0, 255), 3)
-                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()),(0, 255, 0), 3)
-                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()),(255, 0, 0), 3)
+                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (0, 0, 255), 3)
+                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0, 255, 0), 3)
+                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (255, 0, 0), 3)
 
                 #######################################
-                # OBJECT PART AFF CENTERED
+                # OBJECT PART BBOX
                 #######################################
                 aff_color = affpose_dataset_utils.aff_color_map(aff_id)
-
-                obj_part_centered = cld_obj_part_centered[obj_part_id]
-                obj_part_id_idx = str(1000 + obj_part_id)[1:]
-                obj_part_r = aff_meta['obj_part_rotation_' + np.str(obj_part_id_idx)]
-                obj_part_t = aff_meta['obj_part_translation_' + np.str(obj_part_id_idx)]
-
-                # draw model
-                obj_parts_imgpts, jac = cv2.projectPoints(obj_part_centered * 1e3, obj_part_r, obj_part_t * 1e3, config.CAM_MAT, config.CAM_DIST)
-                cv2_obj_parts_img = cv2.polylines(cv2_obj_parts_img, np.int32([np.squeeze(obj_parts_imgpts)]), False, aff_color)
 
                 # obj_part_bbox = np.array(aff_meta['obj_part_bbox_' + np.str(obj_part_id_idx)]).flatten()
                 # obj_part_x1, obj_part_y1, obj_part_x2, obj_part_y2 =\
@@ -178,7 +166,7 @@ def main():
                                                                                   config.BORDER_LIST)
 
                 # drawing bbox = (x1, y1), (x2, y2)
-                cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (x1, y1), (x2, y2), (255, 0, 0), 2) # white
+                cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (x1, y1), (x2, y2), (255, 0, 0), 2)  # white
                 # cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (obj_part_x1, obj_part_y1), (obj_part_x2, obj_part_y2), aff_color, 2)
 
                 cv2_obj_parts_img = cv2.putText(cv2_obj_parts_img,
@@ -186,7 +174,21 @@ def main():
                                                 (x1, y1 - 5),
                                                 cv2.FONT_ITALIC,
                                                 0.4,
-                                                (255, 255, 255)) # red
+                                                (255, 255, 255))  # red
+
+                #######################################
+                # OBJECT PART POSE
+                #######################################
+
+                obj_part_centered = cld_obj_part_centered[obj_part_id]
+                obj_centered = cld_obj_centered[obj_part_id]
+                obj_part_id_idx = str(1000 + obj_part_id)[1:]
+                obj_part_r = aff_meta['obj_part_rotation_' + np.str(obj_part_id_idx)]
+                obj_part_t = aff_meta['obj_part_translation_' + np.str(obj_part_id_idx)]
+
+                # draw model
+                obj_parts_imgpts, jac = cv2.projectPoints(obj_part_centered * 1e3, obj_part_r, obj_part_t * 1e3,config.CAM_MAT, config.CAM_DIST)
+                cv2_obj_parts_img = cv2.polylines(cv2_obj_parts_img, np.int32([np.squeeze(obj_parts_imgpts)]), False,aff_color)
 
                 if aff_id == 1 or aff_id == 7:
                     # draw pose
@@ -222,7 +224,7 @@ def main():
         cv2.imshow('depth', depth)
         cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
         cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
-        cv2.imshow('obj_part_label', obj_part_label*50)
+        cv2.imshow('obj_part_label', obj_part_label * 50)
         cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_obj_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))

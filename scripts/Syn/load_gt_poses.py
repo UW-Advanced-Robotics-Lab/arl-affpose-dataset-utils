@@ -9,6 +9,13 @@ import matplotlib.pyplot as plt
 #######################################
 #######################################
 
+import sys
+sys.path.append('../..')
+# print(sys.path)
+
+#######################################
+#######################################
+
 import cfg as config
 
 from utils import helper_utils
