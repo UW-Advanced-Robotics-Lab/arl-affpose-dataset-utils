@@ -65,7 +65,7 @@ for image_ext in image_exts:
 
     train_files = files[train_idx]
     val_test_files = files[val_test_idx]
-    ### val_files = val_test_files
+    val_files = val_test_files
 
     val_test_idx = np.arange(0, len(val_test_files), 1)
     val_idx = np.random.choice(val_test_idx, size=int(val_test_split * len(val_test_idx)), replace=False)
@@ -75,12 +75,12 @@ for image_ext in image_exts:
 
     print("Chosen Train Files {}/{}".format(len(train_files), len(files)))
     print("Chosen Val Files {}/{}".format(len(val_files), len(files)))
-    print("Chosen Test Files {}/{}".format(len(test_files), len(files)))
+    # print("Chosen Test Files {}/{}".format(len(test_files), len(files)))
 
     if image_ext == config.RGB_EXT:
         train_files_len = len(train_files)
         val_files_len = len(val_files)
-        test_files_len = len(test_files)
+        # test_files_len = len(test_files)
 
     ###############
     # train
@@ -90,6 +90,8 @@ for image_ext in image_exts:
     for idx, file in enumerate(train_files):
         old_file_name = file
         new_file_name = new_data_path + split_folder
+        if idx % 1000 == 0 and idx != 0:
+            print(f'image:{idx + 1}/{len(train_files)}, image file:{file} ..')
 
         # object = old_file_name.split('/')[7]
         object = ''
@@ -184,44 +186,44 @@ for image_ext in image_exts:
         else:
             assert "*** IMAGE EXT DOESN'T EXIST ***"
 
-    ###############
-    # test
-    ###############
-    split_folder = 'arl/'
-
-    for idx, file in enumerate(test_files):
-        old_file_name = file
-        new_file_name = new_data_path + split_folder
-
-        # object = old_file_name.split('/')[7]
-        object = ''
-
-        count = 1000000 + idx
-        image_num = str(count)[1:]
-
-        if image_ext == config.RGB_EXT:
-            move_file_name = new_file_name + 'rgb/' + np.str(image_num) + config.FORMATTED_RGB_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.DEPTH_EXT:
-            move_file_name = new_file_name + 'depth/' + np.str(image_num) + config.FORMATTED_DEPTH_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.OBJ_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + config.FORMATTED_OBJ_LABEL_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.OBJ_PART_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_obj_part/' + np.str(image_num) + config.FORMATTED_OBJ_PART_LABEL_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.AFF_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + config.FORMATTED_AFF_LABEL_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.META_EXT:
-            move_file_name = new_file_name + 'meta/' + np.str(image_num) + config.FORMATTED_META_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        else:
-            assert "*** IMAGE EXT DOESN'T EXIST ***"
+    # ###############
+    # # test
+    # ###############
+    # split_folder = 'arl/'
+    #
+    # for idx, file in enumerate(test_files):
+    #     old_file_name = file
+    #     new_file_name = new_data_path + split_folder
+    #
+    #     # object = old_file_name.split('/')[7]
+    #     object = ''
+    #
+    #     count = 1000000 + idx
+    #     image_num = str(count)[1:]
+    #
+    #     if image_ext == config.RGB_EXT:
+    #         move_file_name = new_file_name + 'rgb/' + np.str(image_num) + config.FORMATTED_RGB_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.DEPTH_EXT:
+    #         move_file_name = new_file_name + 'depth/' + np.str(image_num) + config.FORMATTED_DEPTH_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.OBJ_LABEL_EXT:
+    #         move_file_name = new_file_name + 'masks_obj/' + np.str(image_num) + config.FORMATTED_OBJ_LABEL_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.OBJ_PART_LABEL_EXT:
+    #         move_file_name = new_file_name + 'masks_obj_part/' + np.str(image_num) + config.FORMATTED_OBJ_PART_LABEL_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.AFF_LABEL_EXT:
+    #         move_file_name = new_file_name + 'masks_aff/' + np.str(image_num) + config.FORMATTED_AFF_LABEL_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.META_EXT:
+    #         move_file_name = new_file_name + 'meta/' + np.str(image_num) + config.FORMATTED_META_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     else:
+    #         assert "*** IMAGE EXT DOESN'T EXIST ***"

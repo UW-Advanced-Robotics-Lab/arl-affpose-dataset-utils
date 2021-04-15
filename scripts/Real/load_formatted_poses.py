@@ -36,18 +36,18 @@ def main():
 
     ##################################
     ##################################
-
-    imgs_path = config.ROOT_DATA_PATH + "dataset/*/*/*" + config.RGB_EXT
+    imgs_path = '/data/Akeaveny/Datasets/ARLAffPose/LabelFusion/train/' + '*/*' + '*' + config.RGB_EXT
+    # imgs_path = config.ROOT_DATA_PATH + "dataset/*/*/*" + config.RGB_EXT
     # imgs_path = config.LABELFUSION_AFF_DATASET_PATH + "*" + config.RGB_EXT
     img_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(img_files)))
 
     # select random test images
-    # np.random.seed(1234)
-    # num_files = 25
-    # random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
-    # img_files = np.array(img_files)[random_idx]
-    # print("Chosen Files: {}".format(len(img_files)))
+    np.random.seed(1234)
+    num_files = 25
+    random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
+    img_files = np.array(img_files)[random_idx]
+    print("Chosen Files: {}".format(len(img_files)))
 
     for image_idx, image_addr in enumerate(img_files):
 
@@ -70,17 +70,17 @@ def main():
         # RESIZE & CROP
         ##################################
 
-        # rgb = cv2.resize(rgb, config.RESIZE, interpolation=cv2.INTER_CUBIC)
-        # depth = cv2.resize(depth, config.RESIZE, interpolation=cv2.INTER_CUBIC)
-        # label = cv2.resize(label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
-        # obj_part_label = cv2.resize(obj_part_label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
-        # aff_label = cv2.resize(aff_label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
-        #
-        # rgb = helper_utils.crop(pil_img=rgb, crop_size=config.CROP_SIZE, is_img=True)
-        # depth = helper_utils.crop(pil_img=depth, crop_size=config.CROP_SIZE)
-        # label = helper_utils.crop(pil_img=label, crop_size=config.CROP_SIZE)
-        # obj_part_label = helper_utils.crop(pil_img=obj_part_label, crop_size=config.CROP_SIZE)
-        # aff_label = helper_utils.crop(pil_img=aff_label, crop_size=config.CROP_SIZE)
+        rgb = cv2.resize(rgb, config.RESIZE, interpolation=cv2.INTER_CUBIC)
+        depth = cv2.resize(depth, config.RESIZE, interpolation=cv2.INTER_CUBIC)
+        label = cv2.resize(label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+        obj_part_label = cv2.resize(obj_part_label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+        aff_label = cv2.resize(aff_label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+
+        rgb = helper_utils.crop(pil_img=rgb, crop_size=config.CROP_SIZE, is_img=True)
+        depth = helper_utils.crop(pil_img=depth, crop_size=config.CROP_SIZE)
+        label = helper_utils.crop(pil_img=label, crop_size=config.CROP_SIZE)
+        obj_part_label = helper_utils.crop(pil_img=obj_part_label, crop_size=config.CROP_SIZE)
+        aff_label = helper_utils.crop(pil_img=aff_label, crop_size=config.CROP_SIZE)
 
         ##################################
         ### META
@@ -230,7 +230,7 @@ def main():
         cv2.imshow('gt_obj_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))
 
-        cv2.waitKey(0)
+        cv2.waitKey(1)
 
 if __name__ == '__main__':
     main()

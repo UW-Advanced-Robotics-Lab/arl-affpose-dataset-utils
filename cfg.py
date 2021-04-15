@@ -16,8 +16,8 @@ OBJ_PART_CLASS_IDS_FILE = ROOT_PATH + 'object_meshes/obj_part_classes_ids.txt'
 # Dataset Prelims
 #######################################
 
-ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
-# ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
+# ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
+ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
 
 RGB_EXT            = "_rgb.png"
 DEPTH_EXT          = "_depth.png"
@@ -58,7 +58,7 @@ FORMATTED_META_EXT           = '_meta.mat'
 WIDTH, HEIGHT = 1280, 720
 ORIGINAL_SIZE = (WIDTH, HEIGHT)
 RESIZE        = (int(WIDTH/1), int(HEIGHT/1))
-CROP_SIZE     = (int(1280), int(720)) # (int(640), int(640))
+CROP_SIZE     = (int(640), int(640)) # (int(1280), int(720))
 WIDTH, HEIGHT = CROP_SIZE[0], CROP_SIZE[1]
 MIN_SIZE = MAX_SIZE = 640
 
@@ -69,10 +69,10 @@ X_SCALE = CROP_SIZE[0] / ORIGINAL_SIZE[0]
 Y_SCALE = CROP_SIZE[1] / ORIGINAL_SIZE[1]
 
 CAMERA_SCALE = 1000
-CAM_CX = 653.5618286132812
-CAM_CY = 338.541748046875
-# CAM_CX = 653.5618286132812 * X_SCALE
-# CAM_CY = 338.541748046875  * Y_SCALE
+# CAM_CX = 653.5618286132812
+# CAM_CY = 338.541748046875
+CAM_CX = 653.5618286132812 * X_SCALE
+CAM_CY = 338.541748046875  * Y_SCALE
 CAM_FX = 682.7849731445312
 CAM_FY = 682.7849731445312
 

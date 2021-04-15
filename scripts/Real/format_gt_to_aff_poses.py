@@ -86,12 +86,6 @@ def main():
         obj_ids, obj_poses = load_obj_6dof_pose(yaml_addr)
         sorted_obj_idx = np.arange(start=0, stop=len(obj_ids))
 
-        # sorted_obj_idx = config.SORTED_OBJ_IDX
-        # sorted_obj_idx = None
-        # if sorted_obj_idx is None:
-        #     sorted_obj_idx = np.arange(start=0, stop=len(obj_ids))
-        # obj_ids, obj_poses = obj_ids[sorted_obj_idx], obj_poses[:, :, sorted_obj_idx]
-
         #####################
         # affordances
         #####################
@@ -234,8 +228,8 @@ def main():
                 # print(f'\tobject_id_cld_2D:{len(object_id_cld_2D)}, object_id_cld_3D:{len(object_id_cld_3D)}')
 
                 obj_rvec, _ = cv2.Rodrigues(obj_r)
-                _, rvec, tvec, inliers = cv2.solvePnPRansac(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
-                # _, rvec, tvec = cv2.solvePnP(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
+                # _, rvec, tvec, inliers = cv2.solvePnPRansac(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
+                _, rvec, tvec = cv2.solvePnP(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
                                              cameraMatrix=config.CAM_MAT, distCoeffs=config.CAM_DIST,
                                              rvec=obj_rvec,
                                              tvec=obj_t,
