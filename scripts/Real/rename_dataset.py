@@ -28,10 +28,10 @@ data_path     = config.ROOT_DATA_PATH + 'LabelFusion/train/'
 new_data_path = config.ROOT_DATA_PATH + 'Real/'
 
 image_exts = [
-            config.RGB_EXT,
-            config.DEPTH_EXT,
-            config.OBJ_LABEL_EXT,
-            config.OBJ_PART_LABEL_EXT,
+            # config.RGB_EXT,
+            # config.DEPTH_EXT,
+            # config.OBJ_LABEL_EXT,
+            # config.OBJ_PART_LABEL_EXT,
             config.AFF_LABEL_EXT,
             config.META_EXT
 ]
