@@ -78,7 +78,6 @@ def main():
         aff_label = affpose_dataset_utils.convert_obj_part_mask_to_aff_mask(obj_part_label)
 
         obj_ids = np.unique(label)[1:]
-        sorted_obj_idx = np.arange(start=0, stop=len(obj_ids))
 
         #####################
         # 6D POSE
@@ -103,7 +102,6 @@ def main():
         #######################################
         aff_meta = {}
         aff_meta['object_class_ids'] = obj_ids
-        aff_meta['sorted_obj_idx'] = sorted_obj_idx
         aff_meta['aff_ids'] = np.unique(aff_label)[1:]
 
         #######################################
@@ -149,9 +147,9 @@ def main():
                 rotV, _ = cv2.Rodrigues(target_r)
                 points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
                 axisPoints, _ = cv2.projectPoints(points, rotV, target_t * 1e3, config.CAM_MAT, config.CAM_DIST)
-                cv2_obj_part_img = cv2.line(cv2_obj_part_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (0, 0, 255), 3)
+                cv2_obj_part_img = cv2.line(cv2_obj_part_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 0), 3)
                 cv2_obj_part_img = cv2.line(cv2_obj_part_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0, 255, 0), 3)
-                cv2_obj_part_img = cv2.line(cv2_obj_part_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (255, 0, 0), 3)
+                cv2_obj_part_img = cv2.line(cv2_obj_part_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (0, 0, 255), 3)
 
             #######################################
             # TODO: meta
@@ -248,9 +246,9 @@ def main():
                 rotV, _ = cv2.Rodrigues(obj_r)
                 points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
                 axisPoints, _ = cv2.projectPoints(points, rotV, obj_t * 1e3, config.CAM_MAT, config.CAM_DIST)
-                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (0, 0, 255), 3)
+                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 0), 3)
                 cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0, 255, 0), 3)
-                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (255, 0, 0), 3)
+                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (0, 0, 255), 3)
 
             #######################################
             # TODO: meta
