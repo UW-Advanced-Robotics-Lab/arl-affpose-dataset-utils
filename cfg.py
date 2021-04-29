@@ -69,12 +69,12 @@ X_SCALE = CROP_SIZE[0] / ORIGINAL_SIZE[0]
 Y_SCALE = CROP_SIZE[1] / ORIGINAL_SIZE[1]
 
 CAMERA_SCALE = 1000
-CAM_CX = 653.5618286132812
-CAM_CY = 338.541748046875
-# CAM_CX = 653.5618286132812 * X_SCALE
-# CAM_CY = 338.541748046875  * Y_SCALE
-CAM_FX = 682.7849731445312
-CAM_FY = 682.7849731445312
+CAM_CX = 652.26074
+CAM_CY = 335.50336
+# CAM_CX = 652.26074 * X_SCALE
+# CAM_CY = 335.50336  * Y_SCALE
+CAM_FX = 680.72644
+CAM_FY = 680.72644
 
 XMAP = np.array([[j for i in range(HEIGHT)] for j in range(WIDTH)])
 YMAP = np.array([[i for i in range(HEIGHT)] for j in range(WIDTH)])
@@ -142,9 +142,21 @@ SYN_SCENES = [
 # LabelFusion: TRAIN
 #######################################
 
+### bedroom_bedside_table
+# LOG_FIlE = '004_household_bedroom_bedside_table/images/'
+# LOG_FIlE = '011_household_bedroom_bedside_table/images/' # 1 2 6 8 9
+# LOG_FIlE = '012_household_bedroom_bedside_table/images/' # 2 6 10 11
+# LOG_FIlE = '020_household_bedroom_bedside_table/images/'
+# LOG_FIlE = '028_household_bedroom_bedside_table/images/'
+
+### bedroom_desk
+# LOG_FIlE = '006_household_bedroom_desk/images/'
+# LOG_FIlE = '037_household_bedroom_desk/images/'
+# LOG_FIlE = '040_household_bedroom_desk/images/'
+
 ### bedroom_floor
 # LOG_FIlE = '001_household_bedroom_floor/images/'
-LOG_FIlE = '002_household_bedroom_floor/images/'
+# LOG_FIlE = '002_household_bedroom_floor/images/'
 # LOG_FIlE = '008_household_bedroom_floor/images/'
 # LOG_FIlE = '016_household_bedroom_floor/images/'
 # LOG_FIlE = '023_household_bedroom_floor/images/'
@@ -154,18 +166,6 @@ LOG_FIlE = '002_household_bedroom_floor/images/'
 # LOG_FIlE = '041_household_bedroom_floor/images/'
 # LOG_FIlE = '043_household_bedroom_floor/images/'
 # LOG_FIlE = '045_household_bedroom_floor/images/'
-
-### bedroom_desk
-# LOG_FIlE = '006_household_bedroom_desk/images/'
-# LOG_FIlE = '037_household_bedroom_desk/images/'
-# LOG_FIlE = '040_household_bedroom_desk/images/'
-
-### bedroom_bedside_table
-# LOG_FIlE = '004_household_bedroom_bedside_table/images/'
-# LOG_FIlE = '011_household_bedroom_bedside_table/images/' # 1 2 6 8 9
-# LOG_FIlE = '012_household_bedroom_bedside_table/images/' # 2 6 10 11
-# LOG_FIlE = '020_household_bedroom_bedside_table/images/'
-# LOG_FIlE = '028_household_bedroom_bedside_table/images/'
 
 ### bedroom_small_table
 # LOG_FIlE = '003_household_bedroom_small_table/images/'
@@ -236,13 +236,13 @@ LOG_FIlE = '002_household_bedroom_floor/images/'
 # LOG_FIlE = '008_arl_lab_desk/images/' # 1 2 4 5 9
 # LOG_FIlE = '009_arl_lab_bench_top/images/'
 # LOG_FIlE = '010_arl_lab_floor/images/'
-# LOG_FIlE = '011_arl_lab_bench_top/images/'
-#
+LOG_FIlE = '011_arl_lab_bench_top/images/'
+
 #######################################
 #######################################
 
-LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs/' + LOG_FIlE
-LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset/' + LOG_FIlE
+LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs_arl_lab/' + LOG_FIlE
+LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset_arl_lab/' + LOG_FIlE
 
 # LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'LabelFusion/train/' + LOG_FIlE
 

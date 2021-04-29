@@ -226,7 +226,6 @@ def main():
                 # print(f'\tobject_id_cld_2D:{len(object_id_cld_2D)}, object_id_cld_3D:{len(object_id_cld_3D)}')
 
                 obj_rvec, _ = cv2.Rodrigues(obj_r)
-                # _, rvec, tvec, inliers = cv2.solvePnPRansac(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
                 _, rvec, tvec = cv2.solvePnP(objectPoints=object_id_cld_3D, imagePoints=object_id_cld_2D,
                                              cameraMatrix=config.CAM_MAT, distCoeffs=config.CAM_DIST,
                                              rvec=obj_rvec,

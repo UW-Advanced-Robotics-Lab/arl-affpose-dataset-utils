@@ -22,7 +22,7 @@ import cfg as config
 from utils import helper_utils
 from utils.dataset import affpose_dataset_utils
 
-from utils.pose.load_obj_ply_files import load_obj_ply_files
+from utils.pose.load_obj_ply_files import load_obj_ply_files, load_ply_files
 from utils.pose.load_obj_6dof_pose import load_obj_6dof_pose
 
 from utils.bbox.extract_bboxs_from_label import get_obj_bbox
@@ -36,6 +36,7 @@ def main():
     # Load Ply files
     ###################################
 
+    # cld, obj_classes = load_ply_files()
     cld, cld_obj_centered, cld_obj_part_centered, obj_classes, obj_part_classes = load_obj_ply_files()
 
     ##################################
@@ -47,11 +48,11 @@ def main():
     print('Loaded {} Images'.format(len(img_files)))
 
     # select random test images
-    np.random.seed(0)
-    num_files = 25
-    random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
-    img_files = np.array(img_files)[random_idx]
-    print("Chosen Files: {}".format(len(img_files)))
+    # np.random.seed(0)
+    # num_files = 250
+    # random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
+    # img_files = np.array(img_files)[random_idx]
+    # print("Chosen Files: {}".format(len(img_files)))
 
     for image_idx, image_addr in enumerate(img_files):
 
@@ -66,7 +67,30 @@ def main():
         depth    = np.array(Image.open(depth_addr))
         label    = np.array(Image.open(label_addr))
 
+        ##################################
+        # RESIZE & CROP
+        ##################################
+
+        # rgb = cv2.resize(rgb, config.RESIZE, interpolation=cv2.INTER_CUBIC)
+        # depth = cv2.resize(depth, config.RESIZE, interpolation=cv2.INTER_CUBIC)
+        # label = cv2.resize(label, config.RESIZE, interpolation=cv2.INTER_NEAREST)
+        #
+        # rgb = helper_utils.crop(pil_img=rgb, crop_size=config.CROP_SIZE, is_img=True)
+        # depth = helper_utils.crop(pil_img=depth, crop_size=config.CROP_SIZE)
+        # label = helper_utils.crop(pil_img=label, crop_size=config.CROP_SIZE)
+
+        #####################
+        #####################
+
+        cv2_mask_img = rgb.copy()
         cv2_obj_img = rgb.copy()
+
+        #####################
+        # MASKED RGB IMG
+        #####################
+
+        mask_label = np.ma.getmaskarray(np.ma.masked_not_equal(label, 0)).astype(np.uint8)
+        cv2_mask_img = np.repeat(mask_label, 3).reshape(mask_label.shape[0], mask_label.shape[1], -1) * cv2_mask_img
 
         #####################
         # 6D POSE
@@ -92,15 +116,11 @@ def main():
             # print(f'Translation:{target_t}\nRotation:\n{target_r}\n')
 
             ####################
-            # OBJECT: imgpts look messy after projection with full object models
+            # BBOX
             ####################
-            # obj_color = affpose_dataset_utils.obj_color_map(obj_id)
-            #
-            # # projecting 3D model to 2D image
-            # imgpts, jac = cv2.projectPoints(cld[obj_id] * 1e3, target_r, target_t * 1e3, config.CAM_MAT, config.CAM_DIST)
-            # cv2_obj_img = cv2.polylines(cv2_obj_img, np.int32([np.squeeze(imgpts)]), True, obj_color)
-            #
-            # # drawing bbox = (x1, y1), (x2, y2)
+            obj_color = affpose_dataset_utils.obj_color_map(obj_id)
+
+            # drawing bbox = (x1, y1), (x2, y2)
             # x1, y1, x2, y2 = get_obj_bbox(label, obj_id, config.HEIGHT, config.WIDTH, config.BORDER_LIST)
             # cv2_obj_img = cv2.rectangle(cv2_obj_img, (x1, y1), (x2, y2), obj_color, 2)
             #
@@ -111,6 +131,17 @@ def main():
             #                           cv2.FONT_ITALIC,
             #                           0.4,
             #                           obj_color)
+
+            ####################
+            # OBJECT Pose: imgpts look messy after projection with full object models
+            ####################
+
+            # # projecting 3D model to 2D image
+            # imgpts, jac = cv2.projectPoints(cld[obj_id] * 1e3, target_r, target_t * 1e3, config.CAM_MAT, config.CAM_DIST)
+            # cv2_obj_img = cv2.polylines(cv2_obj_img, helper_utils.sort_imgpts(imgpts), True, obj_color)
+            #
+            # # modify YCB objects rotation matrix
+            # target_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, target_r)
             #
             # # draw pose
             # rotV, _ = cv2.Rodrigues(target_r)
@@ -133,7 +164,6 @@ def main():
                 #######################################
                 # OBJECT CENTERED
                 #######################################
-                obj_color = affpose_dataset_utils.obj_color_map(obj_id)
 
                 obj_centered = cld_obj_centered[obj_part_id]
                 obj_r = copy.deepcopy(target_r)
@@ -141,19 +171,10 @@ def main():
 
                 # projecting 3D model to 2D image
                 imgpts, jac = cv2.projectPoints(obj_centered * 1e3, obj_r, obj_t * 1e3, config.CAM_MAT, config.CAM_DIST)
-                cv2_obj_img = cv2.polylines(cv2_obj_img, np.int32([np.squeeze(imgpts)]), True, obj_color)
+                cv2_obj_img = cv2.polylines(cv2_obj_img, helper_utils.sort_imgpts(imgpts), True, obj_color)
 
-                # drawing bbox = (x1, y1), (x2, y2)
-                x1, y1, x2, y2 = get_obj_bbox(label, obj_id, config.HEIGHT, config.WIDTH, config.BORDER_LIST)
-                cv2_obj_img = cv2.rectangle(cv2_obj_img, (x1, y1), (x2, y2), obj_color, 2)
-
-                cv2_obj_img = cv2.putText(cv2_obj_img,
-                                          affpose_dataset_utils.map_obj_id_to_name(obj_id),
-                                          # umd_utils.aff_id_to_name(label),
-                                          (x1, y1 - 5),
-                                          cv2.FONT_ITALIC,
-                                          0.4,
-                                          obj_color)
+                # modify YCB objects rotation matrix
+                obj_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, obj_r)
 
                 # draw pose
                 rotV, _ = cv2.Rodrigues(obj_r)
@@ -180,16 +201,13 @@ def main():
         # PLOTTING
         #####################
 
-        rgb         = cv2.resize(rgb, config.RESIZE)
-        depth       = cv2.resize(depth, config.RESIZE)
-        label       = cv2.resize(label, config.RESIZE)
         color_label = affpose_dataset_utils.colorize_obj_mask(label)
-        cv2_obj_img = cv2.resize(cv2_obj_img, config.RESIZE)
 
         cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
-        cv2.imshow('depth', depth)
-        cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
-        cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('depth', depth)
+        # cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
+        # cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
+        cv2.imshow('cv2_mask_img', cv2.cvtColor(cv2_mask_img, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
 
         cv2.waitKey(0)
