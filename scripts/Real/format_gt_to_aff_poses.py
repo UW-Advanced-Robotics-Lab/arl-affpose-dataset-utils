@@ -57,6 +57,11 @@ def main():
     # img_files = np.array(img_files)[random_idx]
     # print("Chosen Files: {}".format(len(img_files)))
 
+    _i = 3
+    _num_segments = 4
+    _segments = int(len(img_files)/_num_segments)
+    img_files = np.array(img_files)[_i*_segments:(_i+1)*_segments]  # REAL
+
     for image_idx, image_addr in enumerate(img_files):
 
         # print(f'\nimage:{image_idx+1}/{len(img_files)}, file:{image_addr}')
@@ -170,8 +175,11 @@ def main():
                 imgpts, jac = cv2.projectPoints(obj_centered * 1e3, obj_r, obj_t * 1e3, config.CAM_MAT, config.CAM_DIST)
                 cv2_obj_img = cv2.polylines(cv2_obj_img, np.int32([np.squeeze(imgpts)]), True, obj_color)
 
+                # modify YCB objects rotation matrix
+                _obj_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, obj_r.copy())
+
                 # draw pose
-                rotV, _ = cv2.Rodrigues(obj_r)
+                rotV, _ = cv2.Rodrigues(_obj_r)
                 points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
                 axisPoints, _ = cv2.projectPoints(points, rotV, obj_t * 1e3, config.CAM_MAT, config.CAM_DIST)
                 cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 0), 3)
@@ -260,8 +268,10 @@ def main():
                                                 (255, 255, 255)) # red
 
                 if obj_part_id in affpose_dataset_utils.DRAW_OBJ_PART_POSE:
+                    # modify YCB objects rotation matrix
+                    _obj_part_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, obj_part_r.copy())
                     # draw pose
-                    rotV, _ = cv2.Rodrigues(obj_part_r)
+                    rotV, _ = cv2.Rodrigues(_obj_part_r)
                     points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
                     axisPoints, _ = cv2.projectPoints(points, rotV, obj_part_t * 1e3, config.CAM_MAT, config.CAM_DIST)
                     cv2_obj_parts_img = cv2.line(cv2_obj_parts_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 0), 3)
@@ -320,12 +330,12 @@ def main():
         # cv2_obj_img       = cv2.resize(cv2_obj_img, config.RESIZE)
         # cv2_obj_parts_img = cv2.resize(cv2_obj_parts_img, config.RESIZE)
         #
-        # cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
-        # cv2.imshow('depth', depth)
-        # cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
-        # cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
-        # cv2.imshow('obj_part_label', cv2.cvtColor(color_obj_part_label, cv2.COLOR_BGR2RGB))
-        # cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
+        # # cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
+        # # cv2.imshow('depth', depth)
+        # # cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
+        # # cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
+        # # cv2.imshow('obj_part_label', cv2.cvtColor(color_obj_part_label, cv2.COLOR_BGR2RGB))
+        # # cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
         # cv2.imshow('gt_obj_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
         # cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))
         #

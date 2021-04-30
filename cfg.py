@@ -65,14 +65,14 @@ MIN_SIZE = MAX_SIZE = 640
 _step = 40
 BORDER_LIST = np.arange(start=0, stop=np.max([WIDTH, HEIGHT])+_step, step=_step)
 
-X_SCALE = CROP_SIZE[0] / ORIGINAL_SIZE[0]
-Y_SCALE = CROP_SIZE[1] / ORIGINAL_SIZE[1]
+X_SCALE = (CROP_SIZE[0] - 0.5) / (ORIGINAL_SIZE[0] + 0.5)
+Y_SCALE = (CROP_SIZE[1] - 0.5) / (ORIGINAL_SIZE[1] + 0.5)
 
 CAMERA_SCALE = 1000
 CAM_CX = 652.26074
 CAM_CY = 335.50336
 # CAM_CX = 652.26074 * X_SCALE
-# CAM_CY = 335.50336  * Y_SCALE
+# CAM_CY = 335.50336 * Y_SCALE
 CAM_FX = 680.72644
 CAM_FY = 680.72644
 
@@ -142,107 +142,95 @@ SYN_SCENES = [
 # LabelFusion: TRAIN
 #######################################
 
-### bedroom_bedside_table
-# LOG_FIlE = '004_household_bedroom_bedside_table/images/'
-# LOG_FIlE = '011_household_bedroom_bedside_table/images/' # 1 2 6 8 9
-# LOG_FIlE = '012_household_bedroom_bedside_table/images/' # 2 6 10 11
-# LOG_FIlE = '020_household_bedroom_bedside_table/images/'
-# LOG_FIlE = '028_household_bedroom_bedside_table/images/'
-
-### bedroom_desk
-# LOG_FIlE = '006_household_bedroom_desk/images/'
-# LOG_FIlE = '037_household_bedroom_desk/images/'
-# LOG_FIlE = '040_household_bedroom_desk/images/'
-
-### bedroom_floor
-# LOG_FIlE = '001_household_bedroom_floor/images/'
-# LOG_FIlE = '002_household_bedroom_floor/images/'
-# LOG_FIlE = '008_household_bedroom_floor/images/'
-# LOG_FIlE = '016_household_bedroom_floor/images/'
-# LOG_FIlE = '023_household_bedroom_floor/images/'
-# LOG_FIlE = '024_household_bedroom_floor/images/'
-# LOG_FIlE = '030_household_bedroom_floor/images/'
-# LOG_FIlE = '036_household_bedroom_floor/images/'
-# LOG_FIlE = '041_household_bedroom_floor/images/'
-# LOG_FIlE = '043_household_bedroom_floor/images/'
-# LOG_FIlE = '045_household_bedroom_floor/images/'
-
-### bedroom_small_table
-# LOG_FIlE = '003_household_bedroom_small_table/images/'
-# LOG_FIlE = '009_household_bedroom_small_table/images/'
-# LOG_FIlE = '018_household_bedroom_small_table/images/'
-# LOG_FIlE = '019_household_bedroom_small_table/images/'
-# LOG_FIlE = '022_household_bedroom_small_table/images/'
-# LOG_FIlE = '029_household_bedroom_small_table/images/'
-# LOG_FIlE = '031_household_bedroom_small_table/images/' # 2  3  7  9 11
-# LOG_FIlE = '033_household_bedroom_small_table/images/'
-# LOG_FIlE = '038_household_bedroom_small_table/images/'
-# LOG_FIlE = '044_household_bedroom_small_table/images/'
-
-### household_kitchen_counter_top
-# LOG_FIlE = '005_household_kitchen_counter_top/images/' # [1 3 4 6 7]
-# LOG_FIlE = '007_household_kitchen_counter_top/images/'
-# LOG_FIlE = '010_household_kitchen_counter_top/images/'
-# LOG_FIlE = '021_household_kitchen_counter_top/images/'
-# LOG_FIlE = '025_household_kitchen_counter_top/images/' # [1 4 7 9]
-# LOG_FIlE = '027_household_kitchen_counter_top/images/' # [ 5  7  8  9 11]
-# LOG_FIlE = '047_household_kitchen_counter_top/images/'
-
-### household_kitchen_small_table
-# LOG_FIlE = '013_household_kitchen_small_table/images/'
-# LOG_FIlE = '014_household_kitchen_small_table/images/'
-# LOG_FIlE = '035_household_kitchen_small_table/images/'
-# LOG_FIlE = '046_household_kitchen_small_table/images/'
-
-### household_kitchen_table
-# LOG_FIlE = '000_household_kitchen_table/images/'
-# LOG_FIlE = '015_household_kitchen_table/images/'
-# LOG_FIlE = '017_household_kitchen_table/images/'
-# LOG_FIlE = '026_household_kitchen_table/images/'
-# LOG_FIlE = '032_household_kitchen_table/images/'
-# LOG_FIlE = '034_household_kitchen_table/images/'
-# LOG_FIlE = '039_household_kitchen_table/images/'
-# LOG_FIlE = '042_household_kitchen_table/images/'
+# LOG_FILE = '000_household_kitchen_table/images/'
+# LOG_FILE = '001_household_bedroom_floor/images/'
+# LOG_FILE = '003_household_bedroom_small_table/images/'
+# LOG_FILE = '005_household_kitchen_counter_top/images/'
+# LOG_FILE = '006_household_bedroom_desk/images/'
+# LOG_FILE = '007_household_kitchen_counter_top/images/'
+# LOG_FILE = '008_household_bedroom_floor/images/'
+# LOG_FILE = '011_household_bedroom_bedside_table/images/'
+# LOG_FILE = '012_household_bedroom_bedside_table/images/'
+# LOG_FILE = '013_household_kitchen_small_table/images/'
+# LOG_FILE = '014_household_kitchen_small_table/images/'
+# LOG_FILE = '015_household_kitchen_table/images/'
+# LOG_FILE = '016_household_bedroom_floor/images/'
+# LOG_FILE = '017_household_kitchen_table/images/'
+# LOG_FILE = '020_household_bedroom_bedside_table/images/'
+# LOG_FILE = '021_household_kitchen_counter_top/images/'
+# LOG_FILE = '022_household_bedroom_small_table/images/'
+# LOG_FILE = '023_household_bedroom_floor/images/'
+# LOG_FILE = '024_household_bedroom_floor/images/'
+# LOG_FILE = '026_household_kitchen_table/images/'
+# LOG_FILE = '029_household_bedroom_small_table/images/'
+# LOG_FILE = '030_household_bedroom_floor/images/'
+# LOG_FILE = '031_household_bedroom_small_table/images/'
+# LOG_FILE = '033_household_bedroom_small_table/images/'
+# LOG_FILE = '034_household_kitchen_table/images/'
+# LOG_FILE = '035_household_kitchen_small_table/images/'
+# LOG_FILE = '036_household_bedroom_floor/images/'
+# LOG_FILE = '037_household_bedroom_desk/images/'
+# LOG_FILE = '039_household_kitchen_table/images/'
+# LOG_FILE = '041_household_bedroom_floor/images/'
+# LOG_FILE = '042_household_kitchen_table/images/'
+# LOG_FILE = '043_household_bedroom_floor/images/'
+# LOG_FILE = '045_household_bedroom_floor/images/'
+# LOG_FILE = '046_household_kitchen_small_table/images/'
+# LOG_FILE = '047_household_kitchen_counter_top/images/'
+# LOG_FILE = '049_household_kitchen_tv/images/'
+# LOG_FILE = '050_household_kitchen_stairs/images/'
+# LOG_FILE = '051_household_kitchen_stairs/images/'
+# LOG_FILE = '052_household_kitchen_tv/images/'
+# LOG_FILE = '053_household_kitchen_tv/images/'
+# LOG_FILE = '054_household_kitchen_stairs/images/'
+# LOG_FILE = '055_household_commmon_area/images/'
+# LOG_FILE = '056_household_commmon_area/images/'
+# LOG_FILE = '057_household_kitchen_stairs/images/'
+# LOG_FILE = '059_household_commmon_area/images/'
+# LOG_FILE = '060_arl_lab_desk/images/'
+# LOG_FILE = '061_arl_lab_bench_top/images/'
+# LOG_FILE = '062_arl_lab_bench_top/images/'
+# LOG_FILE = '063_arl_lab_bench_top/images/'
+# LOG_FILE = '064_arl_lab_floor/images/'
+# LOG_FILE = '065_arl_lab_floor/images/'
+# LOG_FILE = '067_arl_lab_bench_top/images/'
+# LOG_FILE = '068_arl_lab_desk/images/'
+# LOG_FILE = '069_arl_lab_bench_top/images/'
+# LOG_FILE = '070_arl_lab_floor/images/'
 
 #######################################
 # LabelFusion: TEST
 #######################################
 
-# LOG_FIlE = '000_household_commmon_area/images/'
-# LOG_FIlE = '001_household_kitchen_tv/images/'
-# LOG_FIlE = '002_household_kitchen_stairs/images/' # 1 2 4 8 9
-# LOG_FIlE = '003_household_kitchen_stairs/images/'
-# LOG_FIlE = '004_household_kitchen_tv/images/'
-# LOG_FIlE = '005_household_kitchen_tv/images/'
-# LOG_FIlE = '006_household_kitchen_stairs/images/' # 1  3  9 11
-# LOG_FIlE = '007_household_commmon_area/images/'
-# LOG_FIlE = '008_household_commmon_area/images/'
-# LOG_FIlE = '009_household_kitchen_stairs/images/'
-# LOG_FIlE = '010_household_kitchen_tv/images/' # [1 4 5 6 7]
-# LOG_FIlE = '011_household_commmon_area/images/'
+# LOG_FILE = '002_household_bedroom_floor/images/'
+# LOG_FILE = '028_household_bedroom_bedside_table/images/'
+# LOG_FILE = '032_household_kitchen_table/images/'
+# LOG_FILE = '040_household_bedroom_desk/images/'
+# LOG_FILE = '058_household_kitchen_tv/images/'
 
 #######################################
-# LabelFusion: ARL
+# LabelFusion: BAD
 #######################################
 
-# LOG_FIlE = '000_arl_lab_desk/images/'
-# LOG_FIlE = '001_arl_lab_bench_top/images/'
-# LOG_FIlE = '002_arl_lab_bench_top/images/'
-# LOG_FIlE = '003_arl_lab_bench_top/images/'
-# LOG_FIlE = '004_arl_lab_floor/images/'
-# LOG_FIlE = '005_arl_lab_floor/images/' # 1  2  7  8 10
-# LOG_FIlE = '006_arl_lab_bench_top/images/'
-# LOG_FIlE = '007_arl_lab_bench_top/images/' #  1  4  9 11
-# LOG_FIlE = '008_arl_lab_desk/images/' # 1 2 4 5 9
-# LOG_FIlE = '009_arl_lab_bench_top/images/'
-# LOG_FIlE = '010_arl_lab_floor/images/'
-LOG_FIlE = '011_arl_lab_bench_top/images/'
+# LOG_FILE = '004_household_bedroom_bedside_table/images/'
+# LOG_FILE = '009_household_bedroom_small_table/images/'
+# LOG_FILE = '010_household_kitchen_counter_top/images/'
+# LOG_FILE = '018_household_bedroom_small_table/images/'
+# LOG_FILE = '019_household_bedroom_small_table/images/'
+# LOG_FILE = '025_household_kitchen_counter_top/images/'
+# LOG_FILE = '027_household_kitchen_counter_top/images/'
+# LOG_FILE = '038_household_bedroom_small_table/images/'
+# LOG_FILE = '044_household_bedroom_small_table/images/'
+# LOG_FILE = '048_household_commmon_area/images/'
+# LOG_FILE = '066_arl_lab_bench_top/images/'
+
+LOG_FILE = '011_arl_lab_bench_top/images/'
 
 #######################################
 #######################################
 
-LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs_arl_lab/' + LOG_FIlE
-LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset_arl_lab/' + LOG_FIlE
+LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs_arl_lab/' + LOG_FILE
+LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset_arl_lab/' + LOG_FILE
 
-# LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'LabelFusion/train/' + LOG_FIlE
+# LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'LabelFusion/train/' + LOG_FILE
 

@@ -48,11 +48,11 @@ def main():
     print('Loaded {} Images'.format(len(img_files)))
 
     # select random test images
-    # np.random.seed(0)
-    # num_files = 125 # 125 or len(img_files)
-    # random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
-    # img_files = np.array(img_files)[random_idx]
-    # print("Chosen Files: {}".format(len(img_files)))
+    np.random.seed(0)
+    num_files = 125 # 125 or len(img_files)
+    random_idx = np.random.choice(np.arange(0, int(len(img_files)), 1), size=int(num_files), replace=False)
+    img_files = np.array(img_files)[random_idx]
+    print("Chosen Files: {}".format(len(img_files)))
 
     for image_idx, image_addr in enumerate(img_files):
 
@@ -210,7 +210,7 @@ def main():
         cv2.imshow('mask', cv2.cvtColor(cv2_mask_img, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
 
-        cv2.waitKey(0)
+        cv2.waitKey(1)
 
 if __name__ == '__main__':
     main()

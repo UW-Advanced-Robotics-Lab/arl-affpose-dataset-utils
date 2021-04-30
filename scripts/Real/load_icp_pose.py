@@ -1,5 +1,6 @@
 import glob
 import copy
+import random
 
 import numpy as np
 
@@ -7,12 +8,9 @@ import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
 
-#######################################
-#######################################
+import scipy.io as scio
 
-import sys
-sys.path.append('../..')
-# print(sys.path)
+import open3d as o3d
 
 #######################################
 #######################################
@@ -22,8 +20,9 @@ import cfg as config
 from utils import helper_utils
 from utils.dataset import affpose_dataset_utils
 
-from utils.pose.load_obj_ply_files import load_obj_ply_files, load_ply_files
+from utils.pose.load_obj_ply_files import load_obj_ply_files
 from utils.pose.load_obj_6dof_pose import load_obj_6dof_pose
+from utils.pose.create_pointcloud_from_depth import create_pointcloud_from_depth_image, create_masked_pointcloud_from_depth_image
 
 from utils.bbox.extract_bboxs_from_label import get_obj_bbox
 
@@ -31,7 +30,6 @@ from utils.bbox.extract_bboxs_from_label import get_obj_bbox
 #######################################
 
 def main():
-
     ###################################
     # Load Ply files
     ###################################
@@ -42,7 +40,7 @@ def main():
     ##################################
     ##################################
 
-    # imgs_path = config.ROOT_DATA_PATH + "logs_test/*/*/*" + config.RGB_EXT
+    # imgs_path = config.ROOT_DATA_PATH + "logs/*/*/*" + config.RGB_EXT
     imgs_path = config.LABELFUSION_LOG_PATH + "*" + config.RGB_EXT
     img_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(img_files)))
@@ -57,15 +55,15 @@ def main():
     for image_idx, image_addr in enumerate(img_files):
 
         file_path = image_addr.split(config.RGB_EXT)[0]
-        print(f'\nimage:{image_idx+1}/{len(img_files)}, file:{file_path}')
+        print(f'\nimage:{image_idx + 1}/{len(img_files)}, file:{file_path}')
 
-        rgb_addr   = file_path + config.RGB_EXT
+        rgb_addr = file_path + config.RGB_EXT
         depth_addr = file_path + config.DEPTH_EXT
         label_addr = file_path + config.OBJ_LABEL_EXT
 
-        rgb      = np.array(Image.open(rgb_addr))
-        depth    = np.array(Image.open(depth_addr))
-        label    = np.array(Image.open(label_addr))
+        rgb = np.array(Image.open(rgb_addr))
+        depth = np.array(Image.open(depth_addr))
+        label = np.array(Image.open(label_addr))
 
         ##################################
         # RESIZE & CROP
@@ -132,6 +130,53 @@ def main():
             #                           0.4,
             #                           obj_color)
 
+            #######################################
+            # ICP REFINEMENT
+            #######################################
+
+            depth_pointcloud = create_pointcloud_from_depth_image(depth)
+            mask_depth_pointcloud, bbox = create_masked_pointcloud_from_depth_image(obj_id, label, depth)
+
+            depth_pcd = o3d.geometry.PointCloud()
+            depth_pcd.points = o3d.utility.Vector3dVector(depth_pointcloud)
+            depth_pcd.paint_uniform_color([0, 0, 1])
+
+            target = o3d.geometry.PointCloud()
+            target.points = o3d.utility.Vector3dVector(mask_depth_pointcloud)
+            # target.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
+            target.paint_uniform_color([1, 0, 0])
+
+            source = o3d.geometry.PointCloud()
+            source.points = o3d.utility.Vector3dVector(cld[obj_id])
+            source.paint_uniform_color([0, 1, 0])
+
+            threshold = 0.05
+            init_SE3_transformation = np.eye(4)
+            init_SE3_transformation[0:3, 0:3] = target_r
+            init_SE3_transformation[0:3, -1] = target_t
+
+            print("Initial Transformation is:")
+            evaluation = o3d.pipelines.registration.evaluate_registration(source, target, threshold,
+                                                                          init_SE3_transformation)
+            print(evaluation)
+            print(init_SE3_transformation)
+
+            # o3d.visualization.draw_geometries([target, copy.deepcopy(source).transform(init_SE3_transformation)])
+
+            print("Apply point-to-point ICP")
+            reg_p2p = o3d.pipelines.registration.registration_icp(source, target, threshold, init_SE3_transformation,
+                                                                  o3d.pipelines.registration.TransformationEstimationPointToPoint(),
+                                                                  # o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=2000)
+                                                                  )
+            print(reg_p2p)
+            print("ICP Transformation is:")
+            print(reg_p2p.transformation)
+
+            icp_r = reg_p2p.transformation[0:3, 0:3]
+            icp_t = reg_p2p.transformation[0:3, -1]
+
+            # o3d.visualization.draw_geometries([target, copy.deepcopy(source).transform(init_SE3_transformation)])
+
             ####################
             # OBJECT Pose: imgpts look messy after projection with full object models
             ####################
@@ -162,27 +207,42 @@ def main():
                 print(f"\tAff: {aff_id}, {obj_part_classes[int(obj_part_id) - 1]}")
 
                 #######################################
-                # OBJECT CENTERED
+                # 6-DOF POSE
                 #######################################
-
                 obj_centered = cld_obj_centered[obj_part_id]
-                obj_r = copy.deepcopy(target_r)
-                obj_t = copy.deepcopy(target_t)
 
                 # projecting 3D model to 2D image
-                imgpts, jac = cv2.projectPoints(obj_centered * 1e3, obj_r, obj_t * 1e3, config.CAM_MAT, config.CAM_DIST)
-                cv2_obj_img = cv2.polylines(cv2_obj_img, helper_utils.sort_imgpts(imgpts), True, obj_color)
+                imgpts, jac = cv2.projectPoints(obj_centered * 1e3, target_r, target_t * 1e3, config.CAM_MAT, config.CAM_DIST)
+                cv2_obj_img = cv2.polylines(cv2_obj_img, np.int32([np.squeeze(imgpts)]), True, obj_color)
 
                 # modify YCB objects rotation matrix
-                _obj_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, obj_r.copy())
+                _target_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, target_r.copy())
 
                 # draw pose
-                rotV, _ = cv2.Rodrigues(_obj_r)
+                rotV, _ = cv2.Rodrigues(_target_r)
                 points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
-                axisPoints, _ = cv2.projectPoints(points, rotV, obj_t * 1e3, config.CAM_MAT, config.CAM_DIST)
+                axisPoints, _ = cv2.projectPoints(points, rotV, target_t * 1e3, config.CAM_MAT, config.CAM_DIST)
                 cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 0), 3)
                 cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0, 255, 0), 3)
                 cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (0, 0, 255), 3)
+
+                #######################################
+                # ICP
+                #######################################
+
+                imgpts, jac = cv2.projectPoints(obj_centered * 1e3, icp_r, icp_t * 1e3, config.CAM_MAT, config.CAM_DIST)
+                cv2_obj_img = cv2.polylines(cv2_obj_img, np.int32([np.squeeze(imgpts)]), True, (0, 255, 255))
+
+                # modify YCB objects rotation matrix
+                _icp_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, icp_r.copy())
+
+                # draw pose
+                rotV, _ = cv2.Rodrigues(_icp_r)
+                points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
+                axisPoints, _ = cv2.projectPoints(points, rotV, icp_t * 1e3, config.CAM_MAT, config.CAM_DIST)
+                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 255), 3)
+                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (255, 0, 255), 3)
+                cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (255, 0, 255), 3)
 
         #####################
         # DEPTH INFO
