@@ -82,6 +82,14 @@ def modify_obj_rotation_matrix_for_grasping(obj_id, obj_r):
                                    ])
         obj_r = np.dot(obj_r, ccw_x_rotation)
 
+        # rotate about y-axis
+        theta = -np.pi / 10
+        ccw_y_rotation = np.array([[np.cos(theta), 0, np.sin(theta)],
+                                   [0, 1, 0],
+                                   [-np.sin(theta), 0, np.cos(theta)],
+                                   ])
+        obj_r = np.dot(obj_r, ccw_y_rotation)
+
     return obj_r
 
 ##################################

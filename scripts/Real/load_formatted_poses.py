@@ -36,8 +36,9 @@ def main():
 
     ##################################
     ##################################
-    # imgs_path = '/data/Akeaveny/Datasets/ARLAffPose/LabelFusion/train/' + '*/*/' + '*' + config.RGB_EXT
-    imgs_path = config.ROOT_DATA_PATH + "dataset/*/*/*" + config.RGB_EXT
+
+    imgs_path = config.ROOT_DATA_PATH + 'LabelFusion/train/' + '*/*/' + '*' + config.RGB_EXT
+    # imgs_path = config.ROOT_DATA_PATH + "dataset/*/*/*" + config.RGB_EXT
     # imgs_path = config.LABELFUSION_AFF_DATASET_PATH + "*" + config.RGB_EXT
     img_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(img_files)))

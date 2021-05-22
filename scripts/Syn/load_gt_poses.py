@@ -40,18 +40,16 @@ def main():
     ##################################
     ##################################
 
-    imgs_path = config.NDDS_PATH + "4_old_table/*/*/" + '??????' + config.SYN_RGB_EXT
+    imgs_path = config.NDDS_PATH + "1_*/*/*/" + '??????' + config.SYN_RGB_EXT
     image_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(image_files)))
 
     # select random test images
-    # np.random.seed(0)
-    # num_files = 25
-    # random_idx = np.random.choice(np.arange(0, int(len(image_files)), 1), size=int(num_files), replace=False)
-    # image_files = np.array(image_files)[random_idx]
-    # print("Selected Files: {}".format(len(image_files)))
-
-    image_files = np.array(image_files)[int(9969):]
+    np.random.seed(0)
+    num_files = 25
+    random_idx = np.random.choice(np.arange(0, int(len(image_files)), 1), size=int(num_files), replace=False)
+    image_files = np.array(image_files)[random_idx]
+    print("Selected Files: {}".format(len(image_files)))
 
     for image_idx, image_addr in enumerate(image_files):
 
@@ -67,6 +65,11 @@ def main():
         depth          = np.array(Image.open(depth_addr))
         obj_part_label = np.array(Image.open(obj_part_label_addr))
 
+        ####################
+        ####################
+
+        cv2_obj_img = rgb.copy()
+
         #####################
         # obj and aff masks
         #####################
@@ -74,9 +77,8 @@ def main():
         aff_label = affpose_dataset_utils.convert_obj_part_mask_to_aff_mask(obj_part_label)
 
         #####################
-        # 6D POSE
+        # json
         #####################
-        cv2_obj_img = rgb.copy()
 
         json_addr = image_addr + config.SYN_JSON_EXT
         json_file = json.load(open(json_addr))
@@ -101,8 +103,27 @@ def main():
             aff_id = affpose_dataset_utils.map_obj_part_id_to_aff_id(object_part_id)
             print(f"\tAff: {aff_id}, {obj_part_classes[int(object_part_id) - 1]}")
 
+            obj_color = affpose_dataset_utils.obj_color_map(object_id)
+            aff_color = affpose_dataset_utils.aff_color_map(aff_id)
+
             ####################
-            # SE3
+            # bbox
+            ####################
+
+            x1, y1, x2, y2 = get_obj_bbox(label, object_id, config.HEIGHT, config.WIDTH, config.BORDER_LIST)
+
+            # drawing bbox = (x1, y1), (x2, y2)
+            # cv2_obj_img = cv2.rectangle(cv2_obj_img, (x1, y1), (x2, y2), (255, 0, 0), 2)
+            #
+            # cv2_obj_img = cv2.putText(cv2_obj_img,
+            #                           affpose_dataset_utils.map_obj_id_to_name(object_id),
+            #                           (x1, y1 - 5),
+            #                           cv2.FONT_ITALIC,
+            #                           0.4,
+            #                           (255, 255, 255))
+
+            ####################
+            # 6-DoF Pose
             ####################
             rot = np.asarray(object_part['pose_transform'])[0:3, 0:3]
 
@@ -114,42 +135,13 @@ def main():
             target_t = np.array(object_part['location']) * 10  # now in [mm]
             target_t /= 1e3  # now in [m]
 
-            ####################
-            # bbox
-            ####################
-            # x1,y1 ------
-            # |          |
-            # |          |
-            # |          |
-            # --------x2,y2
-            object_part_y1, object_part_x1 = np.asarray(object_part['bounding_box']['top_left'])
-            object_part_y2, object_part_x2 = np.asarray(object_part['bounding_box']['bottom_right'])
-            object_part_x1, object_part_y1, object_part_x2, object_part_y2 = \
-                int(object_part_x1), int(object_part_y1), int(object_part_x2), int(object_part_y2)
-
-
-
-            x1, y1, x2, y2 = get_obj_bbox(label, object_id, config.HEIGHT, config.WIDTH, config.BORDER_LIST)
-
-            # ###################
-            # ###################
-            obj_color = affpose_dataset_utils.obj_color_map(object_id)
-            aff_color = affpose_dataset_utils.aff_color_map(aff_id)
-
             # projecting 3D model to 2D image
             imgpts, jac = cv2.projectPoints(cld_obj_part_centered[object_part_id] * 1e3, target_r, target_t * 1e3, config.CAM_MAT, config.CAM_DIST)
             cv2_obj_img = cv2.polylines(cv2_obj_img, np.int32([np.squeeze(imgpts)]), True, aff_color)
 
-            # drawing bbox = (x1, y1), (x2, y2)
-            cv2_obj_img = cv2.rectangle(cv2_obj_img, (x1, y1), (x2, y2), (255, 0, 0), 2)
-
-            cv2_obj_img = cv2.putText(cv2_obj_img,
-                                      affpose_dataset_utils.map_obj_id_to_name(object_id),
-                                      (x1, y1 - 5),
-                                      cv2.FONT_ITALIC,
-                                      0.4,
-                                      (255, 255, 255))
-            if aff_id in [1, 7]:
+            if object_part_id in affpose_dataset_utils.DRAW_OBJ_PART_POSE:
+                # modify YCB objects rotation matrix
+                target_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(object_id, target_r)
                 # draw pose
                 rotV, _ = cv2.Rodrigues(target_r)
                 points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)

@@ -67,11 +67,11 @@ for image_ext in image_exts:
     val_test_files = files[val_test_idx]
     val_files = val_test_files
 
-    val_test_idx = np.arange(0, len(val_test_files), 1)
-    val_idx = np.random.choice(val_test_idx, size=int(val_test_split * len(val_test_idx)), replace=False)
-    test_idx = np.delete(val_test_idx, val_idx)
-    val_files = val_test_files[val_idx]
-    test_files = val_test_files[test_idx]
+    # val_test_idx = np.arange(0, len(val_test_files), 1)
+    # val_idx = np.random.choice(val_test_idx, size=int(val_test_split * len(val_test_idx)), replace=False)
+    # test_idx = np.delete(val_test_idx, val_idx)
+    # val_files = val_test_files[val_idx]
+    # test_files = val_test_files[test_idx]
 
     print("Chosen Train Files {}/{}".format(len(train_files), len(files)))
     print("Chosen Val Files {}/{}".format(len(val_files), len(files)))
@@ -189,7 +189,7 @@ for image_ext in image_exts:
     # ###############
     # # test
     # ###############
-    # split_folder = 'arl/'
+    # split_folder = 'test/'
     #
     # for idx, file in enumerate(test_files):
     #     old_file_name = file

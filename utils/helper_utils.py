@@ -50,10 +50,10 @@ def crop(pil_img, crop_size, is_img=False):
     if is_img:
         img_channels = np.array(pil_img).shape[-1]
         img_channels = 3 if img_channels == 4 else img_channels
-        resize_img = np.zeros((crop_w, crop_h, img_channels))
+        resize_img = np.zeros((crop_h, crop_w, img_channels))
         resize_img[0:(bottom - top), 0:(right - left), :img_channels] = np.array(pil_img)[..., :img_channels]
     else:
-        resize_img = np.zeros((crop_w, crop_h))
+        resize_img = np.zeros((crop_h, crop_w))
         resize_img[0:(bottom - top), 0:(right - left)] = np.array(pil_img)
 
     return np.array(resize_img, dtype=_dtype)

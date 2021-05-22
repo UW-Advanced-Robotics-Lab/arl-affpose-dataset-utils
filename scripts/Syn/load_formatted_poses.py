@@ -80,6 +80,12 @@ def main():
         obj_part_label = helper_utils.crop(pil_img=obj_part_label, crop_size=config.CROP_SIZE)
         aff_label = helper_utils.crop(pil_img=aff_label, crop_size=config.CROP_SIZE)
 
+        #####################
+        #####################
+
+        cv2_obj_img = rgb.copy()
+        cv2_obj_parts_img = rgb.copy()
+
         ##################################
         ### META
         ##################################
@@ -87,13 +93,6 @@ def main():
         # gt pose
         meta_addr = file_path + config.META_EXT
         aff_meta = scio.loadmat(meta_addr)
-
-        cv2_obj_img = rgb.copy()
-        cv2_obj_parts_img = rgb.copy()
-
-        #####################
-        # meta
-        #####################
 
         obj_ids = np.array(aff_meta['object_class_ids']).flatten()
 
@@ -112,19 +111,23 @@ def main():
             obj_r = aff_meta['obj_rotation_' + np.str(obj_meta_idx)]
             obj_t = aff_meta['obj_translation_' + np.str(obj_meta_idx)]
 
+            ####################
+            # bbox
+            ####################
+
             # obj_bbox = np.array(aff_meta['obj_bbox_' + np.str(obj_meta_idx)]).flatten()
             # x1, y1, x2, y2 = obj_bbox[0], obj_bbox[1], obj_bbox[2], obj_bbox[3]
             x1, y1, x2, y2 = get_obj_bbox(label, obj_id, config.HEIGHT, config.WIDTH, config.BORDER_LIST)
 
-            # drawing bbox = (x1, y1), (x2, y2)
-            cv2_obj_img = cv2.rectangle(cv2_obj_img, (x1, y1), (x2, y2), obj_color, 2)
-
-            cv2_obj_img = cv2.putText(cv2_obj_img,
-                                      affpose_dataset_utils.map_obj_id_to_name(obj_id),
-                                      (x1, y1 - 5),
-                                      cv2.FONT_ITALIC,
-                                      0.4,
-                                      obj_color)
+            # # drawing bbox = (x1, y1), (x2, y2)
+            # cv2_obj_img = cv2.rectangle(cv2_obj_img, (x1, y1), (x2, y2), obj_color, 2)
+            #
+            # cv2_obj_img = cv2.putText(cv2_obj_img,
+            #                           affpose_dataset_utils.map_obj_id_to_name(obj_id),
+            #                           (x1, y1 - 5),
+            #                           cv2.FONT_ITALIC,
+            #                           0.4,
+            #                           obj_color)
 
             #######################################
             # ITERATE OVER OBJ PARTS
@@ -137,7 +140,7 @@ def main():
                 print(f"\tAff: {aff_id}, {obj_part_classes[int(obj_part_id) - 1]}")
 
                 #######################################
-                # OBJECT
+                # OBJECT: 6-DoF POSE
                 #######################################
                 obj_centered = cld_obj_centered[obj_part_id]
 
@@ -145,8 +148,11 @@ def main():
                 imgpts, jac = cv2.projectPoints(obj_centered * 1e3, obj_r, obj_t * 1e3, config.CAM_MAT, config.CAM_DIST)
                 cv2_obj_img = cv2.polylines(cv2_obj_img, np.int32([np.squeeze(imgpts)]), True, obj_color)
 
+                # modify YCB objects rotation matrix
+                _obj_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, obj_r.copy())
+
                 # draw pose
-                rotV, _ = cv2.Rodrigues(obj_r)
+                rotV, _ = cv2.Rodrigues(_obj_r)
                 points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
                 axisPoints, _ = cv2.projectPoints(points, rotV, obj_t * 1e3, config.CAM_MAT, config.CAM_DIST)
                 cv2_obj_img = cv2.line(cv2_obj_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 0), 3)
@@ -158,26 +164,23 @@ def main():
                 #######################################
                 aff_color = affpose_dataset_utils.aff_color_map(aff_id)
 
-                # obj_part_bbox = np.array(aff_meta['obj_part_bbox_' + np.str(obj_part_id_idx)]).flatten()
-                # obj_part_x1, obj_part_y1, obj_part_x2, obj_part_y2 =\
-                #     obj_part_bbox[0], obj_part_bbox[1], obj_part_bbox[2], obj_part_bbox[3]
                 obj_part_x1, obj_part_y1, obj_part_x2, obj_part_y2 = get_obj_bbox(obj_part_label, obj_part_id,
                                                                                   config.HEIGHT, config.WIDTH,
                                                                                   config.BORDER_LIST)
 
                 # drawing bbox = (x1, y1), (x2, y2)
-                cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (x1, y1), (x2, y2), (255, 0, 0), 2)  # white
-                # cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (obj_part_x1, obj_part_y1), (obj_part_x2, obj_part_y2), aff_color, 2)
-
-                cv2_obj_parts_img = cv2.putText(cv2_obj_parts_img,
-                                                affpose_dataset_utils.map_obj_id_to_name(obj_id),
-                                                (x1, y1 - 5),
-                                                cv2.FONT_ITALIC,
-                                                0.4,
-                                                (255, 255, 255))  # red
+                # cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (x1, y1), (x2, y2), (255, 0, 0), 2)  # white
+                # # cv2_obj_parts_img = cv2.rectangle(cv2_obj_parts_img, (obj_part_x1, obj_part_y1), (obj_part_x2, obj_part_y2), aff_color, 2)
+                #
+                # cv2_obj_parts_img = cv2.putText(cv2_obj_parts_img,
+                #                                 affpose_dataset_utils.map_obj_id_to_name(obj_id),
+                #                                 (x1, y1 - 5),
+                #                                 cv2.FONT_ITALIC,
+                #                                 0.4,
+                #                                 (255, 255, 255))  # red
 
                 #######################################
-                # OBJECT PART POSE
+                # OBJECT PART: 6-DoF POSE
                 #######################################
 
                 obj_part_centered = cld_obj_part_centered[obj_part_id]
@@ -190,7 +193,9 @@ def main():
                 obj_parts_imgpts, jac = cv2.projectPoints(obj_part_centered * 1e3, obj_part_r, obj_part_t * 1e3,config.CAM_MAT, config.CAM_DIST)
                 cv2_obj_parts_img = cv2.polylines(cv2_obj_parts_img, np.int32([np.squeeze(obj_parts_imgpts)]), False,aff_color)
 
-                if aff_id == 1 or aff_id == 7:
+                if obj_part_id in affpose_dataset_utils.DRAW_OBJ_PART_POSE:
+                    # modify YCB objects rotation matrix
+                    obj_part_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, obj_part_r)
                     # draw pose
                     rotV, _ = cv2.Rodrigues(obj_part_r)
                     points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
@@ -220,12 +225,12 @@ def main():
         color_label = affpose_dataset_utils.colorize_aff_mask(label)
         color_aff_label = affpose_dataset_utils.colorize_aff_mask(aff_label)
 
-        cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
-        cv2.imshow('depth', depth)
-        cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
-        cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
-        cv2.imshow('obj_part_label', obj_part_label * 50)
-        cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('rgb', cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('depth', depth)
+        # cv2.imshow('heatmap', cv2.applyColorMap(depth, cv2.COLORMAP_JET))
+        # cv2.imshow('label', cv2.cvtColor(color_label, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('obj_part_label', obj_part_label * 50)
+        # cv2.imshow('aff_label', cv2.cvtColor(color_aff_label, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_obj_pose', cv2.cvtColor(cv2_obj_img, cv2.COLOR_BGR2RGB))
         cv2.imshow('gt_aff_pose', cv2.cvtColor(cv2_obj_parts_img, cv2.COLOR_BGR2RGB))
 

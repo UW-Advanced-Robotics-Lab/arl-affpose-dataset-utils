@@ -42,8 +42,9 @@ def main():
     ##################################
     ##################################
 
+    imgs_path = config.ROOT_DATA_PATH + 'LabelFusion/train/' + '*/*/' + '*' + config.RGB_EXT
     # imgs_path = config.ROOT_DATA_PATH + "logs_test/*/*/*" + config.RGB_EXT
-    imgs_path = config.LABELFUSION_LOG_PATH + "*" + config.RGB_EXT
+    # imgs_path = config.LABELFUSION_LOG_PATH + "*" + config.RGB_EXT
     img_files = sorted(glob.glob(imgs_path))
     print('Loaded {} Images'.format(len(img_files)))
 
