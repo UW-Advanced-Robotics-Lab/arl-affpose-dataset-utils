@@ -31,7 +31,7 @@ def load_ply_files():
         class_input = class_file.readline()
         if not class_input:
             break
-        input_file = open(config.ROOT_PATH + 'object_meshes/models/{0}/densefusion/{0}.xyz'.format(class_input[:-1]))
+        input_file = open(config.ROOT_DATA_PATH + 'object_meshes/models/{0}/densefusion/{0}.xyz'.format(class_input[:-1]))
         cld[class_id] = []
         while 1:
             input_line = input_file.readline()
@@ -75,7 +75,7 @@ def load_obj_ply_files():
         class_input = class_file.readline()
         if not class_input:
             break
-        input_file = open(config.ROOT_PATH + 'object_meshes/models/{0}/densefusion/{0}.xyz'.format(class_input[:-1]))
+        input_file = open(config.ROOT_DATA_PATH + 'object_meshes/models/{0}/densefusion/{0}.xyz'.format(class_input[:-1]))
         cld[class_id] = []
         while 1:
             input_line = input_file.readline()
@@ -102,7 +102,7 @@ def load_obj_ply_files():
         class_input = class_obj_part_file.readline()
         if not class_input:
             break
-        input_file = open(config.ROOT_PATH + 'object_meshes/models/{0}/densefusion/{0}_obj_centered.xyz'.format(
+        input_file = open(config.ROOT_DATA_PATH + 'object_meshes/models/{0}/densefusion/{0}_obj_centered.xyz'.format(
                 class_input[:-1]))
         cld_obj_centered[class_obj_part_id] = []
         while 1:
@@ -130,7 +130,7 @@ def load_obj_ply_files():
         class_input = class_obj_part_file.readline()
         if not class_input:
             break
-        input_file = open(config.ROOT_PATH + 'object_meshes/models/{0}/densefusion/{0}_obj_part_centered.xyz'.format(class_input[:-1]))
+        input_file = open(config.ROOT_DATA_PATH + 'object_meshes/models/{0}/densefusion/{0}_obj_part_centered.xyz'.format(class_input[:-1]))
         cld_obj_part_centered[class_obj_part_id] = []
         while 1:
             input_line = input_file.readline()

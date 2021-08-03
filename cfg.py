@@ -6,18 +6,19 @@ import numpy as np
 
 ROOT_PATH = '/home/akeaveny/git/ARLAffPoseDatasetUtils/'
 
-CLASSES_FILE   = ROOT_PATH + 'object_meshes/classes.txt'
-CLASS_IDS_FILE = ROOT_PATH + 'object_meshes/classes_ids.txt'
-
-OBJ_PART_CLASSES_FILE   = ROOT_PATH + 'object_meshes/obj_part_classes.txt'
-OBJ_PART_CLASS_IDS_FILE = ROOT_PATH + 'object_meshes/obj_part_classes_ids.txt'
+OBJ_TO_OBJ_PART_TRANSFORMS_FILE = ROOT_PATH + 'AffPose/obj_to_obj_part_transforms.json'
 
 #######################################
 # Dataset Prelims
 #######################################
 
-# ROOT_DATA_PATH = '/home/akeaveny/datasets/LabelFusion/affposenet_dataset/'
 ROOT_DATA_PATH = '/data/Akeaveny/Datasets/ARLAffPose/'
+
+CLASSES_FILE   = ROOT_DATA_PATH + 'object_meshes/classes.txt'
+CLASS_IDS_FILE = ROOT_DATA_PATH + 'object_meshes/classes_ids.txt'
+
+OBJ_PART_CLASSES_FILE   = ROOT_DATA_PATH + 'object_meshes/obj_part_classes.txt'
+OBJ_PART_CLASS_IDS_FILE = ROOT_DATA_PATH + 'object_meshes/obj_part_classes_ids.txt'
 
 RGB_EXT            = "_rgb.png"
 DEPTH_EXT          = "_depth.png"
@@ -58,7 +59,7 @@ FORMATTED_META_EXT           = '_meta.mat'
 WIDTH, HEIGHT = 1280, 720
 ORIGINAL_SIZE = (WIDTH, HEIGHT)
 RESIZE        = (int(WIDTH/1), int(HEIGHT/1))
-CROP_SIZE     = (int(1280), int(720)) # (int(640), int(480)) or (int(1280), int(720))
+CROP_SIZE     = (int(1280), int(720)) # (int(1280), int(720)) or (int(640), int(640))
 WIDTH, HEIGHT = CROP_SIZE[0], CROP_SIZE[1]
 MIN_SIZE = MAX_SIZE = 640
 
@@ -70,27 +71,35 @@ Y_SCALE = CROP_SIZE[1] / ORIGINAL_SIZE[1]
 
 CAMERA_SCALE = 1000
 
-# Real
-# CAM_CX = 652.26074
-# CAM_CY = 335.50336
+# # Real
+# # # CAM_CX = 652.26074
+# # # CAM_CY = 335.50336
 # # CAM_CX = 652.26074 * X_SCALE
 # # CAM_CY = 335.50336 * Y_SCALE
-# CAM_FX = 680.72644
-# CAM_FY = 680.72644
-
-# Syn
+# # CAM_FX = 680.72644
+# # CAM_FY = 680.72644
+#
+# # Syn
 # CAM_CX = 653.5618286132812
 # CAM_CY = 338.541748046875
-CAM_CX = 653.5618286132812 * X_SCALE
-CAM_CY = 338.541748046875  * Y_SCALE
-CAM_FX = 682.7849731445312
-CAM_FY = 682.7849731445312
-
-XMAP = np.array([[j for i in range(HEIGHT)] for j in range(WIDTH)])
-YMAP = np.array([[i for i in range(HEIGHT)] for j in range(WIDTH)])
-
-CAM_MAT = np.array([[CAM_FX, 0, CAM_CX], [0, CAM_FY, CAM_CY], [0, 0, 1]])
-CAM_DIST = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+# # # CAM_CX = 653.5618286132812 * X_SCALE
+# # # CAM_CY = 338.541748046875  * Y_SCALE
+# CAM_FX = 682.7849731445312
+# CAM_FY = 682.7849731445312
+#
+# # # ARL
+# # CAM_CX = 615.583
+# # CAM_CY = 359.161
+# # CAM_CX = 615.583 * X_SCALE
+# # CAM_CY = 359.161 * Y_SCALE
+# # CAM_FX = 739.436
+# # CAM_FY = 739.436
+#
+# XMAP = np.array([[j for i in range(HEIGHT)] for j in range(WIDTH)])
+# YMAP = np.array([[i for i in range(HEIGHT)] for j in range(WIDTH)])
+#
+# CAM_MAT = np.array([[CAM_FX, 0, CAM_CX], [0, CAM_FY, CAM_CY], [0, 0, 1]])
+# CAM_DIST = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 
 #######################################
 # Random Configs
@@ -217,6 +226,8 @@ SYN_SCENES = [
 # LOG_FILE = '032_household_kitchen_table/images/'
 # LOG_FILE = '040_household_bedroom_desk/images/'
 # LOG_FILE = '058_household_kitchen_tv/images/'
+# LOG_FILE = '069_arl_lab_bench_top/images/'
+LOG_FILE = '081_arl_lab_wam/images/'
 
 #######################################
 # LabelFusion: BAD
@@ -233,13 +244,12 @@ SYN_SCENES = [
 # LOG_FILE = '044_household_bedroom_small_table/images/'
 # LOG_FILE = '048_household_commmon_area/images/'
 # LOG_FILE = '066_arl_lab_bench_top/images/'
-
-LOG_FILE = '011_arl_lab_bench_top/images/'
+# LOG_FILE = '011_arl_lab_bench_top/images/'
 
 #######################################
 #######################################
 
-LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'logs_arl_lab/' + LOG_FILE
+LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'LabelFusion/dataset_test/' + LOG_FILE
 LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset_arl_lab/' + LOG_FILE
 
 # LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'LabelFusion/train/' + LOG_FILE

@@ -6,7 +6,7 @@ from utils import helper_utils
 # OBJECT CONFIGS
 #######################################
 
-DRAW_OBJ_PART_POSE = np.array([1, 3, 5, 7, 9, 11, 14, 16, 19, 22, 24])
+DRAW_OBJ_PART_POSE = np.array([1, 3, 5, 7, 9, 12, 15, 17, 19, 22, 24])
 
 ##################################
 ##################################
@@ -31,7 +31,7 @@ def modify_obj_rotation_matrix_for_grasping(obj_id, obj_r):
     #                            [0, 0, 1],
     #                            ])
 
-    if obj_id in np.array([6, 7, 8, 11]): # 019_pitcher_base, 024_bowl, 025_mug or 051_large_clamp
+    if obj_id in np.array([7, 8, 11]): # 024_bowl, 025_mug or 051_large_clamp
         # rotate about z-axis
         theta = -np.pi / 2
         ccw_z_rotation = np.array([[np.cos(theta), -np.sin(theta), 0],
@@ -48,9 +48,34 @@ def modify_obj_rotation_matrix_for_grasping(obj_id, obj_r):
                                    ])
         obj_r = np.dot(obj_r, ccw_x_rotation)
 
+    elif obj_id in np.array([6]): # 019_pitcher_base
+        # rotate about z-axis
+        theta = -np.pi / 2
+        ccw_z_rotation = np.array([[np.cos(theta), -np.sin(theta), 0],
+                                   [np.sin(theta), np.cos(theta), 0],
+                                   [0, 0, 1],
+                                   ])
+        obj_r = np.dot(obj_r, ccw_z_rotation)
+
+        # rotate about x-axis
+        theta = -np.pi / 2
+        ccw_x_rotation = np.array([[1, 0, 0],
+                                   [0, np.cos(theta), -np.sin(theta)],
+                                   [0, np.sin(theta), np.cos(theta)],
+                                   ])
+        obj_r = np.dot(obj_r, ccw_x_rotation)
+
+        # rotate about y-axis
+        theta = -np.pi / 2
+        ccw_y_rotation = np.array([[np.cos(theta), 0 , np.sin(theta)],
+                                   [0, 1, 0],
+                                   [-np.sin(theta), 0, np.cos(theta)],
+                                   ])
+        obj_r = np.dot(obj_r, ccw_y_rotation)
+
     elif obj_id == 9:  # 035_power_drill
         # rotate about y-axis
-        theta = np.pi / 2
+        theta = -np.pi / 2
         ccw_y_rotation = np.array([[np.cos(theta), 0 , np.sin(theta)],
                                    [0, 1, 0],
                                    [-np.sin(theta), 0, np.cos(theta)],

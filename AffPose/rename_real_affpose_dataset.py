@@ -13,8 +13,7 @@ import matplotlib.pyplot as plt
 #######################################
 
 import sys
-sys.path.append('../..')
-# print(sys.path)
+sys.path.append('../')
 
 #######################################
 #######################################
@@ -24,16 +23,16 @@ import cfg as config
 #######################################
 #######################################
 
-data_path     = config.ROOT_DATA_PATH + 'LabelFusion/train/'
-new_data_path = config.ROOT_DATA_PATH + 'Real/'
+data_path     = config.ROOT_DATA_PATH + 'LabelFusion/dataset_train/'
+new_data_path = config.ROOT_DATA_PATH + 'Real_test/'
 
 image_exts = [
             # config.RGB_EXT,
-            # config.DEPTH_EXT,
-            # config.OBJ_LABEL_EXT,
-            # config.OBJ_PART_LABEL_EXT,
-            config.AFF_LABEL_EXT,
-            config.META_EXT
+            config.DEPTH_EXT,
+            config.OBJ_LABEL_EXT,
+            config.OBJ_PART_LABEL_EXT,
+            # config.AFF_LABEL_EXT,
+            # config.META_EXT
 ]
 
 #######################################
@@ -49,7 +48,7 @@ train_files_len, val_files_len, test_files_len = 0, 0, 0
 
 for image_ext in image_exts:
     file_path = data_path + '*/*/' + '??????????' + image_ext
-    files = np.array(sorted(glob.glob(file_path)))
+    files = np.sort(np.array(glob.glob(file_path)))
     print("\nLoaded files: ", len(files))
     print("File path: ", file_path)
 
@@ -61,17 +60,11 @@ for image_ext in image_exts:
     train_idx = np.random.choice(total_idx, size=int(train_val_split * len(total_idx)), replace=False)
     val_test_idx = np.delete(total_idx, train_idx)
 
-    ### test_files = files
+    # test_files = np.sort(np.array(files))
 
-    train_files = files[train_idx]
-    val_test_files = files[val_test_idx]
+    train_files = np.sort(np.array(files[train_idx]))
+    val_test_files = np.sort(np.array(files[val_test_idx]))
     val_files = val_test_files
-
-    # val_test_idx = np.arange(0, len(val_test_files), 1)
-    # val_idx = np.random.choice(val_test_idx, size=int(val_test_split * len(val_test_idx)), replace=False)
-    # test_idx = np.delete(val_test_idx, val_idx)
-    # val_files = val_test_files[val_idx]
-    # test_files = val_test_files[test_idx]
 
     print("Chosen Train Files {}/{}".format(len(train_files), len(files)))
     print("Chosen Val Files {}/{}".format(len(val_files), len(files)))
@@ -194,6 +187,8 @@ for image_ext in image_exts:
     # for idx, file in enumerate(test_files):
     #     old_file_name = file
     #     new_file_name = new_data_path + split_folder
+    #     if idx % 1000 == 0 and idx != 0:
+    #         print(f'image:{idx + 1}/{len(test_files)}, image file:{file} ..')
     #
     #     # object = old_file_name.split('/')[7]
     #     object = ''
