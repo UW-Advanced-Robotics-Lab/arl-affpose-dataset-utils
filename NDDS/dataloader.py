@@ -71,6 +71,9 @@ class ARLAffPose():
         self.img_files = np.sort(np.array(glob.glob(self.img_path)))
         print(f'Loaded {len(self.img_files)} Images')
 
+         # TODO: remove this.
+        self.img_files = self.img_files[28197+84:]
+
         if _subdivide_images:
             # sub-divide images for formatting.
             img_subdivides = len(self.img_files)/_num_subdivides

@@ -46,34 +46,36 @@ def main():
             #######################################
 
             obj_part_ids = affpose_dataset_utils.map_obj_id_to_obj_part_ids(obj_id)
+            _obj_part_ids = np.unique(data['obj_part_label'])
 
             obj_t = np.zeros(shape=(len(obj_part_ids), 3))
             obj_r = np.zeros(shape=(len(obj_part_ids), 3, 3))
 
             print(f'\tobj_part_ids:{obj_part_ids}')
             for obj_part_idx, obj_part_id in enumerate(obj_part_ids):
-                aff_id = affpose_dataset_utils.map_obj_part_id_to_aff_id(obj_part_id)
-                aff_color = affpose_dataset_utils.aff_color_map(aff_id)
-                print(f"\t\tAff: {aff_id}, {dataloader.obj_part_classes[int(obj_part_id) - 1]}")
+                if obj_part_id in _obj_part_ids:
+                    aff_id = affpose_dataset_utils.map_obj_part_id_to_aff_id(obj_part_id)
+                    aff_color = affpose_dataset_utils.aff_color_map(aff_id)
+                    print(f"\t\tAff: {aff_id}, {dataloader.obj_part_classes[int(obj_part_id) - 1]}")
 
-                #######################################
-                # OBJECT PART POSE
-                #######################################
+                    #######################################
+                    # OBJECT PART POSE
+                    #######################################
 
-                obj_part_meta_idx = str(1000 + obj_part_id)[1:]
-                obj_part_r = meta['obj_part_rotation_' + np.str(obj_part_meta_idx)]
-                obj_part_t = meta['obj_part_translation_' + np.str(obj_part_meta_idx)]
+                    obj_part_meta_idx = str(1000 + obj_part_id)[1:]
+                    obj_part_r = meta['obj_part_rotation_' + np.str(obj_part_meta_idx)]
+                    obj_part_t = meta['obj_part_translation_' + np.str(obj_part_meta_idx)]
 
-                obj_part_r = np.array(obj_part_r, dtype=np.float64).reshape(3, 3)
-                obj_part_t = np.array(obj_part_t, dtype=np.float64).reshape(-1, 3)
+                    obj_part_r = np.array(obj_part_r, dtype=np.float64).reshape(3, 3)
+                    obj_part_t = np.array(obj_part_t, dtype=np.float64).reshape(-1, 3)
 
-                #######################################
-                # TODO: META
-                #######################################
+                    #######################################
+                    # TODO: META
+                    #######################################
 
-                obj_r[obj_part_idx, :, :], obj_t[obj_part_idx, :] = get_obj_pose_in_camera_frame(obj_part_r, obj_part_t,
-                                                                dataloader.obj_to_obj_part_transforms[f'{obj_part_id}'],
-                                                                                                 )
+                    obj_r[obj_part_idx, :, :], obj_t[obj_part_idx, :] = get_obj_pose_in_camera_frame(obj_part_r, obj_part_t,
+                                                                    dataloader.obj_to_obj_part_transforms[f'{obj_part_id}'],
+                                                                                                     )
 
             # averaging obj pose.
             obj_t = np.mean(obj_t, axis=0).reshape(-1)

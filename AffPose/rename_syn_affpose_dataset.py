@@ -13,8 +13,7 @@ import matplotlib.pyplot as plt
 #######################################
 
 import sys
-sys.path.append('../..')
-# print(sys.path)
+sys.path.append('../')
 
 #######################################
 #######################################
@@ -28,19 +27,19 @@ data_path     = config.NDDS_PATH
 new_data_path = config.ROOT_DATA_PATH + 'Syn_test/'
 
 image_exts = [
-            config.SYN_RGB_EXT,
+            # config.SYN_RGB_EXT,
             # config.SYN_DEPTH_EXT,
             # config.SYN_OBJ_LABEL_EXT,
             # config.SYN_OBJ_PART_LABEL_EXT,
             # config.SYN_AFF_LABEL_EXT,
-            # config.SYN_META_EXT,
+            config.SYN_META_EXT,
 ]
 
 #######################################
 #######################################
 
-train_val_split = 0.8 # 80% train / 20% val
-val_test_split = 0.95 # 15% val   / 1% test
+train_val_split = 0.8  # 80% train / 20% val
+val_test_split = 0.95  # 15% val   / 1% test
 
 ########################
 ########################
