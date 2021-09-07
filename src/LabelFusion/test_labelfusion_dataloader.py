@@ -11,12 +11,8 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append('../../')
 
-import cfg as config
-
-from LabelFusion import dataloader
-
-from utils import helper_utils
-from utils.dataset import affpose_dataset_utils
+from src.LabelFusion import dataloader
+from src.utils.dataset import affpose_dataset_utils
 
 
 class TestLabelFusionDataloader(unittest.TestCase):
@@ -24,20 +20,17 @@ class TestLabelFusionDataloader(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestLabelFusionDataloader, self).__init__(*args, **kwargs)
         # load real images.
-        self.dataloader = dataloader.ARLAffPose()
+        self.dataloader = dataloader.ARLAffPose(_select_random_images=True)
 
     def load_images(self):
 
         for image_idx, image_addr in enumerate(self.dataloader.img_files):
 
-            data = self.dataloader._get_labelfusion_item(image_idx)
+            data = self.dataloader.get_labelfusion_item(image_idx)
 
             rgb = data["rgb"]
             depth = data["depth"]
-            label = data["label"]
-            meta = data["meta"]
             colour_label = data["colour_label"]
-            cv2_pose_img = data["cv2_pose_img"]
 
             #####################
             # PLOTTING
@@ -53,13 +46,9 @@ class TestLabelFusionDataloader(unittest.TestCase):
     def load_gt_pose(self):
 
         for image_idx, image_addr in enumerate(self.dataloader.img_files):
-            data = self.dataloader._get_labelfusion_item(image_idx)
+            data = self.dataloader.get_labelfusion_item(image_idx)
 
-            rgb = data["rgb"]
-            depth = data["depth"]
-            label = data["label"]
             meta = data["meta"]
-            colour_label = data["colour_label"]
             cv2_pose_img = data["cv2_pose_img"]
 
             #######################################
@@ -85,7 +74,7 @@ class TestLabelFusionDataloader(unittest.TestCase):
                 obj_part_ids = affpose_dataset_utils.map_obj_id_to_obj_part_ids(obj_id)
                 print(f'\tobj_part_ids:{obj_part_ids}')
                 for obj_part_id in obj_part_ids:
-                    if obj_part_id == 1:
+
                         aff_id = affpose_dataset_utils.map_obj_part_id_to_aff_id(obj_part_id)
                         print(f"\t\tAff: {aff_id}, {self.dataloader.obj_part_classes[int(obj_part_id) - 1]}")
 

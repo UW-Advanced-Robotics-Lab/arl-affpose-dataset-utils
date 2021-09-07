@@ -8,10 +8,8 @@ import matplotlib.pyplot as plt
 #######################################
 #######################################
 
-import cfg as config
-
-from utils import helper_utils
-from utils.dataset import affpose_dataset_utils
+from src import cfg as config
+from src.utils.dataset import affpose_dataset_utils
 
 ##################################
 ##################################

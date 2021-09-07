@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import cv2
 
@@ -6,15 +8,12 @@ import scipy.io as scio
 import sys
 sys.path.append('../../')
 
-import cfg as config
+from src import cfg as config
 
-from LabelFusion import dataloader as LabelFusionDataloader
+from src.LabelFusion import dataloader as LabelFusionDataloader
 
-from utils import helper_utils
-from utils.dataset import affpose_dataset_utils
-
-from utils.pose.load_obj_ply_files import load_obj_ply_files
-from utils.pose.transform_obj_to_obj_part_pose import get_obj_part_pose_in_camera_frame
+from src.utils import helper_utils
+from src.utils.dataset import affpose_dataset_utils
 
 
 def main():
@@ -25,11 +24,13 @@ def main():
     # Load ARL AffPose Images.
     dataloader = LabelFusionDataloader.ARLAffPose(subset='train',
                                                   subfolder='*',
-                                                  _subdivide_images=True,
+                                                  _subdivide_images=False,
+                                                  _subdivide_idx=3,
+                                                  _num_subdivides=4,
                                                   )
 
     for image_idx, image_addr in enumerate(dataloader.img_files):
-        data = dataloader._get_labelfusion_item(image_idx)
+        data = dataloader.get_labelfusion_item(image_idx)
 
         rgb = data["rgb"]
         depth = data["depth"]
@@ -108,8 +109,16 @@ def main():
         # WRITING AFF DATASET
         #####################
 
-        aff_label_addr = dataloader.file_path + config.AFF_LABEL_EXT
-        obj_part_label_addr = dataloader.file_path + config.OBJ_PART_LABEL_EXT
+        str_folder = dataloader.img_path.split('/')[-3]
+        str_num = image_addr.split('/')[-1].split('_')[0]
+        LABELFUSION_AFF_DATASET_FOLDER = config.ROOT_DATA_PATH + 'LabelFusion/dataset_wam_single/' + str_folder + '/images/'
+        LABELFUSION_AFF_DATASET_PATH = LABELFUSION_AFF_DATASET_FOLDER + str_num
+
+        if not os.path.exists(LABELFUSION_AFF_DATASET_FOLDER):
+            os.makedirs(LABELFUSION_AFF_DATASET_FOLDER)
+
+        aff_label_addr = LABELFUSION_AFF_DATASET_PATH + config.AFF_LABEL_EXT
+        obj_part_label_addr = LABELFUSION_AFF_DATASET_PATH + config.OBJ_PART_LABEL_EXT
 
         cv2.imwrite(aff_label_addr, np.array(aff_label, dtype=np.uint8))
         cv2.imwrite(obj_part_label_addr, np.array(obj_part_label, dtype=np.uint8))

@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import cv2
 
@@ -7,15 +9,14 @@ import scipy.io as scio
 import sys
 sys.path.append('../../')
 
-import cfg as config
+from src import cfg as config
 
-from LabelFusion import dataloader as LabelFusionDataloader
+from src.LabelFusion import dataloader as LabelFusionDataloader
 
-from utils import helper_utils
-from utils.dataset import affpose_dataset_utils
+from src.utils import helper_utils
+from src.utils.dataset import affpose_dataset_utils
 
-from utils.pose.load_obj_ply_files import load_obj_ply_files
-from utils.pose.transform_obj_to_obj_part_pose import get_obj_part_pose_in_camera_frame
+from src.utils.pose.transform_obj_to_obj_part_pose import get_obj_part_pose_in_camera_frame
 
 
 def main():
@@ -26,19 +27,18 @@ def main():
     # Load ARL AffPose Images.
     dataloader = LabelFusionDataloader.ARLAffPose(subset='train',
                                                   subfolder='*',
-                                                  _subdivide_images=True,
+                                                  _subdivide_images=False,
                                                   _subdivide_idx=3,
                                                   _num_subdivides=4,
                                                   )
 
     for image_idx, image_addr in enumerate(dataloader.img_files):
-        data = dataloader._get_labelfusion_item(image_idx)
+        data = dataloader.get_labelfusion_item(image_idx)
 
         rgb = data["rgb"]
         depth = data["depth"]
         label = data["label"]
         meta = data["meta"]
-        colour_label = data["colour_label"]
         cv2_pose_img = data["cv2_pose_img"]
 
         #######################################
@@ -126,7 +126,28 @@ def main():
                     cv2_pose_img = cv2.line(cv2_pose_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0, 255, 0), 3)
                     cv2_pose_img = cv2.line(cv2_pose_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (0, 0, 255), 3)
 
-        meta_addr = dataloader.file_path + config.META_EXT
+        #####################
+        # WRITING DATASET
+        #####################
+
+        str_folder = dataloader.img_path.split('/')[-3]
+        str_num = image_addr.split('/')[-1].split('_')[0]
+        LABELFUSION_AFF_DATASET_FOLDER = config.ROOT_DATA_PATH + 'LabelFusion/dataset_wam_single/' + str_folder + '/images/'
+        LABELFUSION_AFF_DATASET_PATH = LABELFUSION_AFF_DATASET_FOLDER + str_num
+
+        if not os.path.exists(LABELFUSION_AFF_DATASET_FOLDER):
+            os.makedirs(LABELFUSION_AFF_DATASET_FOLDER)
+
+        # init addr.
+        rgb_addr = LABELFUSION_AFF_DATASET_PATH + config.RGB_EXT
+        depth_addr = LABELFUSION_AFF_DATASET_PATH + config.DEPTH_EXT
+        obj_label_addr = LABELFUSION_AFF_DATASET_PATH + config.OBJ_LABEL_EXT
+        meta_addr = LABELFUSION_AFF_DATASET_PATH + config.META_EXT
+
+        # write.
+        cv2.imwrite(rgb_addr, cv2.cvtColor(np.array(rgb, dtype=np.uint8), cv2.COLOR_RGB2BGR))
+        cv2.imwrite(depth_addr, np.array(depth).astype(np.uint16))
+        cv2.imwrite(obj_label_addr, np.array(label, dtype=np.uint8))
         scio.savemat(meta_addr, meta)
 
         #####################

@@ -12,13 +12,13 @@ import scipy.io as scio
 #######################################
 #######################################
 
-import cfg as config
+from src import cfg as config
 
-from utils import helper_utils
-from utils.dataset import affpose_dataset_utils
+from src.utils import helper_utils
+from src.utils.dataset import affpose_dataset_utils
 
-from utils.pose.load_obj_ply_files import load_obj_ply_files
-from utils.pose.transform_obj_to_obj_part_pose import get_obj_part_pose_in_camera_frame
+from src.utils.pose.load_obj_ply_files import load_obj_ply_files
+from src.utils.pose.load_obj_6dof_pose import load_obj_6dof_pose
 
 #######################################
 #######################################
@@ -54,7 +54,9 @@ class ARLAffPose():
         # Load Images
         ##################################
 
-        self.img_path = config.ROOT_DATA_PATH + f"LabelFusion/dataset_{subset}/" + f"{subfolder}/images/*" + config.RGB_EXT
+        self.img_path = config.LABELFUSION_LOG_PATH + "*" + config.RGB_EXT
+        # self.img_path = config.ROOT_DATA_PATH + f"LabelFusion/dataset_{subset}/" + f"{subfolder}/images/*" + config.RGB_EXT
+        # self.img_path = "/data/Akeaveny/Datasets/ARLAffPose/LabelFusion/dataset_train/*_arl_lab_wam/images/*" + config.RGB_EXT
         self.img_files = np.sort(np.array(glob.glob(self.img_path)))
         print(f'Loaded {len(self.img_files)} Images')
 
@@ -81,45 +83,23 @@ class ARLAffPose():
             self.img_files = np.sort(np.array(self.img_files)[idx])
             print("Chosen Files: {}".format(len(self.img_files)))
 
+    def get_labelfusion_item(self, image_idx):
 
-    def _get_labelfusion_item(self, image_idx):
-
-        image_addr = self.img_files[image_idx]
-
-        self.file_path = image_addr.split(config.RGB_EXT)[0]
+        self.image_addr = self.img_files[image_idx]
+        self.file_path = self.image_addr.split(config.RGB_EXT)[0]
         print(f'\nimage:{image_idx+1}/{len(self.img_files)}, file:{self.file_path }')
 
         #######################################
         # Load LabelFusion data.
         #######################################
 
-        rgb_addr = self.file_path  + config.RGB_EXT
-        depth_addr = self.file_path  + config.DEPTH_EXT
-        label_addr = self.file_path  + config.OBJ_LABEL_EXT
-        meta_addr = self.file_path  + config.META_EXT
+        rgb_addr = self.file_path + config.RGB_EXT
+        depth_addr = self.file_path + config.DEPTH_EXT
+        label_addr = self.file_path + config.OBJ_LABEL_EXT
 
         rgb = np.array(Image.open(rgb_addr))
         depth = np.array(Image.open(depth_addr))
         label = np.array(Image.open(label_addr))
-        meta = scio.loadmat(meta_addr)
-
-        ##################################
-        # Load Camera Intrinsics.
-        ##################################
-
-        if 'arl_lab_wam' in self.file_path:
-            self.cam_cx = 615.583 * config.X_SCALE
-            self.cam_cy = 359.161 * config.Y_SCALE
-            self.cam_fx = 739.436
-            self.cam_fy = 739.436
-        else:
-            self.cam_cx = 652.26074 * config.X_SCALE
-            self.cam_cy = 335.50336 * config.Y_SCALE
-            self.cam_fx = 680.72644
-            self.cam_fy = 680.72644
-
-        self.cam_mat = np.array([[self.cam_fx, 0, self.cam_cx], [0, self.cam_fy, self.cam_cy], [0, 0, 1]])
-        self.cam_dist = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 
         #######################################
         # Resize and Crop.
@@ -149,20 +129,42 @@ class ARLAffPose():
         # Img to draw 6-DoF Pose.
         cv2_pose_img = colour_label.copy()
 
+        #######################################
+        # META
+        #######################################
+
+        yaml_addr = self.file_path + config.POSE_EXT
+        meta = load_obj_6dof_pose(yaml_addr)
+
+        # Load Camera Intrinsics.
+        if 'arl_lab_wam' in self.file_path or 'logs_wam_single' in self.file_path:
+            self.cam_cx = 615.583 * config.X_SCALE
+            self.cam_cy = 359.161 * config.Y_SCALE
+            self.cam_fx = 739.436
+            self.cam_fy = 739.436
+        else:
+            self.cam_cx = 652.26074 * config.X_SCALE
+            self.cam_cy = 335.50336 * config.Y_SCALE
+            self.cam_fx = 680.72644
+            self.cam_fy = 680.72644
+
+        self.cam_mat = np.array([[self.cam_fx, 0, self.cam_cx], [0, self.cam_fy, self.cam_cy], [0, 0, 1]])
+        self.cam_dist = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+
         #####################
         #####################
 
-        return {"rgb" : rgb,
-                "depth" : depth,
-                "label" : label,
-                "meta" : meta,
-                "colour_label" : colour_label,
-                "cv2_pose_img" : cv2_pose_img,
+        return {"rgb": rgb,
+                "depth": depth,
+                "label": label,
+                "colour_label": colour_label,
+                "cv2_pose_img": cv2_pose_img,
+                "meta": meta,
                 }
 
-    def _get_affpose_item(self, image_idx):
+    def get_affpose_item(self, image_idx):
 
-        data = self._get_labelfusion_item(image_idx)
+        data = self.get_labelfusion_item(image_idx)
 
         #######################################
         # OBJECT

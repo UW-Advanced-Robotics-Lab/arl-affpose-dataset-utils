@@ -18,28 +18,28 @@ sys.path.append('../../')
 #######################################
 #######################################
 
-import cfg as config
+from src import cfg as config
 
 #######################################
 #######################################
 
-data_path     = config.ROOT_DATA_PATH + 'LabelFusion/dataset_train/'
-new_data_path = config.ROOT_DATA_PATH + 'Real_test/'
+data_path     = config.ROOT_DATA_PATH + 'LabelFusion/dataset_wam/'
+new_data_path = config.ROOT_DATA_PATH + 'WAM/'
 
 image_exts = [
-            # config.RGB_EXT,
+            config.RGB_EXT,
             config.DEPTH_EXT,
             config.OBJ_LABEL_EXT,
             config.OBJ_PART_LABEL_EXT,
-            # config.AFF_LABEL_EXT,
-            # config.META_EXT
+            config.AFF_LABEL_EXT,
+            config.META_EXT
 ]
 
 #######################################
 #######################################
 
-train_val_split = 0.8 # 80% train / 20% val
-val_test_split = 0.75 # 15% val   / 5% test
+train_val_split = 0.8  # 80% train / 20% val
+val_test_split = 0.75  # 15% val   / 5% test
 
 ########################
 ########################
@@ -60,19 +60,20 @@ for image_ext in image_exts:
     train_idx = np.random.choice(total_idx, size=int(train_val_split * len(total_idx)), replace=False)
     val_test_idx = np.delete(total_idx, train_idx)
 
+    train_files = np.sort(np.array(files))
     # test_files = np.sort(np.array(files))
 
-    train_files = np.sort(np.array(files[train_idx]))
-    val_test_files = np.sort(np.array(files[val_test_idx]))
-    val_files = val_test_files
+    # train_files = np.sort(np.array(files[train_idx]))
+    # val_test_files = np.sort(np.array(files[val_test_idx]))
+    # val_files = val_test_files
 
-    print("Chosen Train Files {}/{}".format(len(train_files), len(files)))
-    print("Chosen Val Files {}/{}".format(len(val_files), len(files)))
+    # print("Chosen Train Files {}/{}".format(len(train_files), len(files)))
+    # print("Chosen Val Files {}/{}".format(len(val_files), len(files)))
     # print("Chosen Test Files {}/{}".format(len(test_files), len(files)))
 
     if image_ext == config.RGB_EXT:
         train_files_len = len(train_files)
-        val_files_len = len(val_files)
+        # val_files_len = len(val_files)
         # test_files_len = len(test_files)
 
     ###############
@@ -137,47 +138,47 @@ for image_ext in image_exts:
         else:
             assert "*** IMAGE EXT DOESN'T EXIST ***"
 
-    ##############
-    # val
-    ##############
-    split_folder = 'val/'
-
-    for idx, file in enumerate(val_files):
-        old_file_name = file
-        new_file_name = new_data_path + split_folder
-
-        # object = old_file_name.split('/')[7]
-        object = ''
-
-        count = 1000000 + idx
-        image_num = str(count)[1:]
-
-        if image_ext == config.RGB_EXT:
-            move_file_name = new_file_name + 'rgb/' + str(image_num) + config.FORMATTED_RGB_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.DEPTH_EXT:
-            move_file_name = new_file_name + 'depth/' + str(image_num) + config.FORMATTED_DEPTH_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.OBJ_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_obj/' + str(image_num) + config.FORMATTED_OBJ_LABEL_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.OBJ_PART_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_obj_part/' + str(image_num) + config.FORMATTED_OBJ_PART_LABEL_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.AFF_LABEL_EXT:
-            move_file_name = new_file_name + 'masks_aff/' + str(image_num) + config.FORMATTED_AFF_LABEL_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        elif image_ext == config.META_EXT:
-            move_file_name = new_file_name + 'meta/' + str(image_num) + config.FORMATTED_META_EXT
-            shutil.copyfile(old_file_name, move_file_name)
-
-        else:
-            assert "*** IMAGE EXT DOESN'T EXIST ***"
+    # ##############
+    # # val
+    # ##############
+    # split_folder = 'val/'
+    #
+    # for idx, file in enumerate(val_files):
+    #     old_file_name = file
+    #     new_file_name = new_data_path + split_folder
+    #
+    #     # object = old_file_name.split('/')[7]
+    #     object = ''
+    #
+    #     count = 1000000 + idx
+    #     image_num = str(count)[1:]
+    #
+    #     if image_ext == config.RGB_EXT:
+    #         move_file_name = new_file_name + 'rgb/' + str(image_num) + config.FORMATTED_RGB_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.DEPTH_EXT:
+    #         move_file_name = new_file_name + 'depth/' + str(image_num) + config.FORMATTED_DEPTH_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.OBJ_LABEL_EXT:
+    #         move_file_name = new_file_name + 'masks_obj/' + str(image_num) + config.FORMATTED_OBJ_LABEL_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.OBJ_PART_LABEL_EXT:
+    #         move_file_name = new_file_name + 'masks_obj_part/' + str(image_num) + config.FORMATTED_OBJ_PART_LABEL_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.AFF_LABEL_EXT:
+    #         move_file_name = new_file_name + 'masks_aff/' + str(image_num) + config.FORMATTED_AFF_LABEL_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     elif image_ext == config.META_EXT:
+    #         move_file_name = new_file_name + 'meta/' + str(image_num) + config.FORMATTED_META_EXT
+    #         shutil.copyfile(old_file_name, move_file_name)
+    #
+    #     else:
+    #         assert "*** IMAGE EXT DOESN'T EXIST ***"
 
     # ###############
     # # test

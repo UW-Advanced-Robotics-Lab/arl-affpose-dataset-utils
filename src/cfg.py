@@ -247,9 +247,25 @@ LOG_FILE = '081_arl_lab_wam/images/'
 # LOG_FILE = '011_arl_lab_bench_top/images/'
 
 #######################################
+# LabelFusion: SINGLE OBJECTS
 #######################################
 
-LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'LabelFusion/dataset_test/' + LOG_FILE
+# LOG_FILE = 'logs_wam_single/001_mallet/images/'
+LOG_FILE = 'logs_wam_single/002_spatula/images/'
+# LOG_FILE = 'logs_wam_single/003_wooden_spoon/images/'
+# LOG_FILE = 'logs_wam_single/004_screwdriver/images/'
+# LOG_FILE = 'logs_wam_single/005_garden_shovel/images/'
+# LOG_FILE = 'logs_wam_single/019_pitcher_base/images/'
+# LOG_FILE = 'logs_wam_single/024_bowl/images/'
+# LOG_FILE = 'logs_wam_single/025_mug/images/'
+# LOG_FILE = 'logs_wam_single/035_power_drill/images/'
+# LOG_FILE = 'logs_wam_single/037_scissors/images/'
+# LOG_FILE = 'logs_wam_single/051_large_clamp/images/'
+
+#######################################
+#######################################
+
+LABELFUSION_LOG_PATH = ROOT_DATA_PATH + 'LabelFusion/arl_affposenet_dataset/' + LOG_FILE
 LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'dataset_arl_lab/' + LOG_FILE
 
 # LABELFUSION_AFF_DATASET_PATH = ROOT_DATA_PATH + 'LabelFusion/train/' + LOG_FILE

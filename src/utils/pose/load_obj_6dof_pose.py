@@ -48,4 +48,22 @@ def load_obj_6dof_pose(yaml_addr):
     obj_poses = np.asarray(_obj_poses)
     obj_poses = np.reshape(obj_poses, (3, 4, len(parsed)))
 
-    return obj_ids, obj_poses
+    #######################################
+    # TODO: meta
+    #######################################
+
+    meta = {}
+    meta['object_class_ids'] = obj_ids.flatten()
+    for idx, obj_id in enumerate(obj_ids):
+
+        obj_r = obj_poses[0:3, 0:3, idx]
+        obj_t = obj_poses[0:3, -1, idx]
+
+        #######################################
+        # TODO: meta
+        #######################################
+        obj_meta_idx = str(1000 + obj_id)[1:]
+        meta['obj_rotation_' + np.str(obj_meta_idx)] = obj_r
+        meta['obj_translation_' + np.str(obj_meta_idx)] = obj_t
+
+    return meta
