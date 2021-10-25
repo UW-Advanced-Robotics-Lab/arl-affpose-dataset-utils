@@ -12,13 +12,14 @@ import scipy.io as scio
 #######################################
 #######################################
 
-import cfg as config
+from src import cfg as config
 
-from utils import helper_utils
-from utils.dataset import affpose_dataset_utils
+from src.utils import helper_utils
+from src.utils.dataset import affpose_dataset_utils
 
-from utils.pose.load_obj_ply_files import load_obj_ply_files
-from utils.pose.transform_obj_to_obj_part_pose import get_obj_part_pose_in_camera_frame
+from src.utils.bbox.extract_bboxs_from_label import get_bbox
+from src.utils.pose.load_obj_ply_files import load_obj_ply_files
+from src.utils.pose.transform_obj_to_obj_part_pose import get_obj_part_pose_in_camera_frame
 
 #######################################
 #######################################
@@ -67,12 +68,13 @@ class ARLAffPose():
         ##################################
 
         # /data/Akeaveny/Datasets/ARLAffPose/NDDS/1_bench/002/ZED
-        self.img_path = config.ROOT_DATA_PATH + f"NDDS/{scene}/" + f"{subfolder}/ZED/" + '??????' + config.SYN_RGB_EXT
+        # self.img_path = config.ROOT_DATA_PATH + f"NDDS/{scene}/" + f"{subfolder}/ZED/" + '??????' + config.SYN_RGB_EXT
+        self.img_path = '/home/akeaveny/Downloads/thesis_images_single_objects/Single_Objects/001_mallet/ZED/' + '??????' + config.SYN_RGB_EXT
         self.img_files = np.sort(np.array(glob.glob(self.img_path)))
         print(f'Loaded {len(self.img_files)} Images')
 
-         # TODO: remove this.
-        self.img_files = self.img_files[28197+84:]
+        # TODO: remove this.
+        # self.img_files = self.img_files[28197+84:]
 
         if _subdivide_images:
             # sub-divide images for formatting.
@@ -139,6 +141,24 @@ class ARLAffPose():
         aff_label = helper_utils.crop(pil_img=aff_label, crop_size=config.CROP_SIZE)
 
         #####################
+        # OBJ BBOX
+        #####################
+
+        obj_id = 1
+        bbox_img = rgb.copy()
+
+        bbox = get_bbox(mask=label, obj_ids=np.array([1]), img_width=config.CROP_SIZE[0], img_height=config.CROP_SIZE[1])
+        bbox = np.array(bbox, dtype=np.int32).flatten()
+
+        bbox_img = cv2.rectangle(bbox_img, (bbox[0], bbox[1]), (bbox[2], bbox[3]), 255, 1)
+        bbox_img = cv2.putText(bbox_img,
+                               f'{affpose_dataset_utils.map_obj_id_to_name(obj_id)}',
+                               (bbox[0], bbox[1] - 5),
+                               cv2.FONT_ITALIC,
+                               0.6,
+                               (255, 255, 255))
+
+        #####################
         # Image utils
         #####################
 
@@ -149,15 +169,19 @@ class ARLAffPose():
         # Label
         helper_utils.print_class_labels(label)
         colour_label = affpose_dataset_utils.colorize_obj_mask(label)
-        colour_label = cv2.addWeighted(rgb, 0.35, colour_label, 0.65, 0)
+        colour_label = cv2.addWeighted(bbox_img, 0.35, colour_label, 0.65, 0)
 
         # Label
+        # aff_id = 4
+        # aff_label = np.ma.getmaskarray(np.ma.masked_equal(aff_label.copy(), aff_id)).astype(np.uint8) * aff_id
+
         helper_utils.print_class_labels(aff_label)
         colour_aff_label = affpose_dataset_utils.colorize_aff_mask(aff_label)
-        colour_aff_label = cv2.addWeighted(rgb, 0.35, colour_aff_label, 0.65, 0)
+        colour_aff_label = cv2.addWeighted(bbox_img, 0.35, colour_aff_label, 0.65, 0)
 
         # Img to draw 6-DoF Pose.
-        cv2_pose_img = colour_label.copy()
+        cv2_obj_pose_img = colour_label.copy()
+        cv2_obj_part_pose_img = colour_aff_label.copy()
 
         #####################
         #####################
@@ -170,5 +194,6 @@ class ARLAffPose():
                 "meta" : meta,
                 "colour_label" : colour_label,
                 "colour_aff_label": colour_aff_label,
-                "cv2_pose_img" : cv2_pose_img,
+                "cv2_obj_pose_img": cv2_obj_pose_img,
+                "cv2_obj_part_pose_img": cv2_obj_part_pose_img,
                 }

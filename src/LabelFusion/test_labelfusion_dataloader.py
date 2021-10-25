@@ -112,6 +112,6 @@ if __name__ == '__main__':
 
     # run desired test.
     suite = unittest.TestSuite()
-    suite.addTest(TestLabelFusionDataloader("load_gt_pose"))
+    suite.addTest(TestLabelFusionDataloader("load_images"))
     runner = unittest.TextTestRunner()
     runner.run(suite)

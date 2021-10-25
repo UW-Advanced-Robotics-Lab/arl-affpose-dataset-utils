@@ -6,27 +6,27 @@ import scipy.io as scio
 import sys
 sys.path.append('../../')
 
-import cfg as config
+from src import cfg as config
 
-from NDDS import dataloader as NDDSDataloader
+from src.NDDS import dataloader as NDDSDataloader
 
-from utils.dataset import affpose_dataset_utils
-from utils.pose.transform_obj_to_obj_part_pose import get_obj_pose_in_camera_frame
+from src.utils.dataset import affpose_dataset_utils
+from src.utils.pose.transform_obj_to_obj_part_pose import get_obj_pose_in_camera_frame
 
 
 def main():
 
     # flag to show plotting.
-    show_plot = False
+    show_plot = True
 
     # Load ARL AffPose Images.
-    dataloader = NDDSDataloader.ARLAffPose(scene = '6_*')
+    dataloader = NDDSDataloader.ARLAffPose()
 
     for image_idx, image_addr in enumerate(dataloader.img_files):
         data = dataloader._get_ndds_item(image_idx)
 
         meta = data["meta"]
-        cv2_pose_img = data["cv2_pose_img"]
+        cv2_pose_img = data["cv2_obj_pose_img"]
 
         obj_ids = np.array(meta['object_class_ids']).flatten()
         for idx, obj_id in enumerate(obj_ids):
@@ -86,14 +86,16 @@ def main():
 
             if show_plot:
 
-                # OBJ.
-                cld_obj_centered = dataloader.cld[obj_id]
-                imgpts, jac = cv2.projectPoints(cld_obj_centered * 1e3, obj_r, obj_t * 1e3, dataloader.cam_mat, dataloader.cam_dist)
-                cv2_pose_img = cv2.polylines(cv2_pose_img, np.int32([np.squeeze(imgpts)]), True, obj_color)
+                # # OBJ.
+                # cld_obj_centered = dataloader.cld[obj_id]
+                # imgpts, jac = cv2.projectPoints(cld_obj_centered * 1e3, obj_r, obj_t * 1e3, dataloader.cam_mat, dataloader.cam_dist)
+                # cv2_pose_img = cv2.polylines(cv2_pose_img, np.int32([np.squeeze(imgpts)]), True, obj_color)
 
                 # modify YCB objects rotation matrix
                 _obj_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, obj_r.copy())
 
+                obj_t[2] += 0.10
+                
                 # draw pose
                 rotV, _ = cv2.Rodrigues(_obj_r)
                 points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)

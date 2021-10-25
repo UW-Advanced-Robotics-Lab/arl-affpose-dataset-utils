@@ -17,12 +17,12 @@ sys.path.append('../')
 #######################################
 #######################################
 
-import cfg as config
+from src import cfg as config
 
-from LabelFusion import dataloader
+from src.LabelFusion import dataloader
 
-from utils import helper_utils
-from utils.dataset import affpose_dataset_utils
+from src.utils import helper_utils
+from src.utils.dataset import affpose_dataset_utils
 
 #######################################
 #######################################
@@ -37,7 +37,7 @@ class TestRealAffposeDataloader(unittest.TestCase):
 
     def load_masks(self):
         for image_idx, image_addr in enumerate(self.dataloader.img_files):
-            data = self.dataloader._get_affpose_item(image_idx)
+            data = self.dataloader.get_affpose_item(image_idx)
 
             colour_label = data["colour_label"]
             colour_aff_label = data["colour_aff_label"]
@@ -53,7 +53,7 @@ class TestRealAffposeDataloader(unittest.TestCase):
 
     def draw_obj_and_obj_part_pose(self):
         for image_idx, image_addr in enumerate(self.dataloader.img_files):
-            data = self.dataloader._get_affpose_item(image_idx)
+            data = self.dataloader.get_affpose_item(image_idx)
 
             meta = data["meta"]
             cv2_pose_img = data["cv2_pose_img"]
@@ -157,6 +157,6 @@ if __name__ == '__main__':
 
     # run desired test.
     suite = unittest.TestSuite()
-    suite.addTest(TestRealAffposeDataloader("draw_obj_and_obj_part_pose"))
+    suite.addTest(TestRealAffposeDataloader("load_masks"))
     runner = unittest.TextTestRunner()
     runner.run(suite)

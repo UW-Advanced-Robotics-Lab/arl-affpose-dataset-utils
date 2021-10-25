@@ -59,7 +59,7 @@ FORMATTED_META_EXT           = '_meta.mat'
 WIDTH, HEIGHT = 1280, 720
 ORIGINAL_SIZE = (WIDTH, HEIGHT)
 RESIZE        = (int(WIDTH/1), int(HEIGHT/1))
-CROP_SIZE     = (int(1280), int(720)) # (int(1280), int(720)) or (int(640), int(640))
+CROP_SIZE     = (int(640), int(640))  # (int(1280), int(720)) or (int(640), int(640))
 WIDTH, HEIGHT = CROP_SIZE[0], CROP_SIZE[1]
 MIN_SIZE = MAX_SIZE = 640
 
@@ -227,7 +227,7 @@ SYN_SCENES = [
 # LOG_FILE = '040_household_bedroom_desk/images/'
 # LOG_FILE = '058_household_kitchen_tv/images/'
 # LOG_FILE = '069_arl_lab_bench_top/images/'
-LOG_FILE = '081_arl_lab_wam/images/'
+# LOG_FILE = '081_arl_lab_wam/images/'
 
 #######################################
 # LabelFusion: BAD
@@ -250,8 +250,8 @@ LOG_FILE = '081_arl_lab_wam/images/'
 # LabelFusion: SINGLE OBJECTS
 #######################################
 
-# LOG_FILE = 'logs_wam_single/001_mallet/images/'
-LOG_FILE = 'logs_wam_single/002_spatula/images/'
+LOG_FILE = 'logs_wam_single/001_mallet/images/'
+# LOG_FILE = 'logs_wam_single/002_spatula/images/'
 # LOG_FILE = 'logs_wam_single/003_wooden_spoon/images/'
 # LOG_FILE = 'logs_wam_single/004_screwdriver/images/'
 # LOG_FILE = 'logs_wam_single/005_garden_shovel/images/'

@@ -11,12 +11,12 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append('../../')
 
-import cfg as config
+from src import cfg as config
 
-from NDDS import dataloader
+from src.NDDS import dataloader
 
-from utils import helper_utils
-from utils.dataset import affpose_dataset_utils
+from src.utils import helper_utils
+from src.utils.dataset import affpose_dataset_utils
 
 
 class TestNDDSDataloader(unittest.TestCase):
@@ -49,13 +49,13 @@ class TestNDDSDataloader(unittest.TestCase):
 
             cv2.waitKey(0)
 
-    def load_gt_pose(self):
+    def load_gt_obj_part_pose(self):
 
         for image_idx, image_addr in enumerate(self.dataloader.img_files):
             data = self.dataloader._get_ndds_item(image_idx)
 
             meta = data["meta"]
-            cv2_pose_img = data["cv2_pose_img"]
+            cv2_pose_img = data["cv2_obj_part_pose_img"]
 
             obj_ids = np.array(meta['object_class_ids']).flatten()
             for idx, obj_id in enumerate(obj_ids):
@@ -87,21 +87,23 @@ class TestNDDSDataloader(unittest.TestCase):
                     #######################################
                     #######################################
 
-                    # projecting 3D model to 2D image
-                    cld_obj_part_centered = self.dataloader.cld_obj_part_centered[obj_part_id]
-                    imgpts, jac = cv2.projectPoints(cld_obj_part_centered * 1e3, obj_part_r, obj_part_t * 1e3, self.dataloader.cam_mat, self.dataloader.cam_dist)
-                    cv2_pose_img = cv2.polylines(cv2_pose_img, np.int32([np.squeeze(imgpts)]), True, aff_color)
+                    if obj_part_id in affpose_dataset_utils.DRAW_OBJ_PART_POSE:
 
-                    # modify YCB objects rotation matrix
-                    _obj_part_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, obj_part_r.copy())
+                        # # projecting 3D model to 2D image
+                        # cld_obj_part_centered = self.dataloader.cld_obj_part_centered[obj_part_id]
+                        # imgpts, jac = cv2.projectPoints(cld_obj_part_centered * 1e3, obj_part_r, obj_part_t * 1e3, self.dataloader.cam_mat, self.dataloader.cam_dist)
+                        # cv2_pose_img = cv2.polylines(cv2_pose_img, np.int32([np.squeeze(imgpts)]), True, aff_color)
 
-                    # draw pose
-                    rotV, _ = cv2.Rodrigues(_obj_part_r)
-                    points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
-                    axisPoints, _ = cv2.projectPoints(points, rotV, obj_part_t * 1e3, self.dataloader.cam_mat, self.dataloader.cam_dist)
-                    cv2_pose_img = cv2.line(cv2_pose_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 0), 3)
-                    cv2_pose_img = cv2.line(cv2_pose_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0, 255, 0), 3)
-                    cv2_pose_img = cv2.line(cv2_pose_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (0, 0, 255), 3)
+                        # modify YCB objects rotation matrix
+                        _obj_part_r = affpose_dataset_utils.modify_obj_rotation_matrix_for_grasping(obj_id, obj_part_r.copy())
+
+                        # draw pose
+                        rotV, _ = cv2.Rodrigues(_obj_part_r)
+                        points = np.float32([[100, 0, 0], [0, 100, 0], [0, 0, 100], [0, 0, 0]]).reshape(-1, 3)
+                        axisPoints, _ = cv2.projectPoints(points, rotV, obj_part_t * 1e3, self.dataloader.cam_mat, self.dataloader.cam_dist)
+                        cv2_pose_img = cv2.line(cv2_pose_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 0), 3)
+                        cv2_pose_img = cv2.line(cv2_pose_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0, 255, 0), 3)
+                        cv2_pose_img = cv2.line(cv2_pose_img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (0, 0, 255), 3)
 
             #####################
             # PLOTTING
