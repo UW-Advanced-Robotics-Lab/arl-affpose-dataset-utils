@@ -10,7 +10,7 @@ Object Mesh files can also be found here - [Object Mesh files](https://drive.goo
 
 A Stereolab ZED camera at 1280x720 was used or simulated to capture images. 
 
-To this end, each RGB-D image is annotated with a object 6-DoF Pose using [LabelFusion for Real Images](https://github.com/RobotLocomotion/LabelFusion) or [NDDS for Synthetic Images](https://github.com/NVIDIA/Dataset_Synthesizer).
+To this end, each RGB-D image is annotated with a object 6-DoF Pose using [LabelFusion](https://github.com/RobotLocomotion/LabelFusion) for Real Images or [NDDS](https://github.com/NVIDIA/Dataset_Synthesizer) for Synthetic Images.
 
 ### LabelFusion or NDDS.
 
@@ -23,5 +23,3 @@ Leverage the utils/ folder to view RGB-D images with ground truth annotations. E
 ### AffPose.
 
 Scripts to view the prepared dataset with RGB-D images and ground truth annotations with affordance labels and object part 6-DoF pose.
-
- 
