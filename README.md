@@ -1,4 +1,4 @@
-### This repo contains tools used to prep the ARL AffPose Dataset.
+### This repo contains tools used to prep the Advanced Robotics Lab (ARL) Affordance Pose (AffPose) Dataset.
 
 The ARL AffPose Dataset can be found here - [Real Images](https://drive.google.com/drive/folders/1gP-vQVuDKdhCxdViRxAeoH8v99sTfPXi?usp=sharing) or [Synthetic Images](https://drive.google.com/drive/folders/1X47BIXqyMO9xyoFMCXEGVPP9T0ZDEPUe?usp=sharing).
 
