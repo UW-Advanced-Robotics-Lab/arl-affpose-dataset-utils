@@ -1,10 +1,10 @@
 ### This repo contains tools used to prep the ARL AffPose Dataset.
 
-![Alt text](samples/dataset.png?raw=true "Title")
-
 The ARL AffPose Dataset can be found here - [Real Images](https://drive.google.com/drive/folders/1gP-vQVuDKdhCxdViRxAeoH8v99sTfPXi?usp=sharing) or [Synthetic Images](https://drive.google.com/drive/folders/1X47BIXqyMO9xyoFMCXEGVPP9T0ZDEPUe?usp=sharing).
 
 Object Mesh files can also be found here - [Object Mesh files](https://drive.google.com/file/d/1MwRN3CS2iGLoVmUzkLUrLMryVxJhugWA/view?usp=sharing). 
+
+![Alt text](samples/dataset.png?raw=true "Title")
 
 ### ZED Camera.
 
