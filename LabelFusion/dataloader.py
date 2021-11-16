@@ -12,13 +12,13 @@ import scipy.io as scio
 #######################################
 #######################################
 
-from src import cfg as config
+import cfg as config
 
-from src.utils import helper_utils
-from src.utils.dataset import affpose_dataset_utils
+from utils import helper_utils
+from utils.dataset import affpose_dataset_utils
 
-from src.utils.pose.load_obj_ply_files import load_obj_ply_files
-from src.utils.pose.load_obj_6dof_pose import load_obj_6dof_pose
+from utils.pose.load_obj_ply_files import load_obj_ply_files
+from utils.pose.load_obj_6dof_pose import load_obj_6dof_pose
 
 #######################################
 #######################################

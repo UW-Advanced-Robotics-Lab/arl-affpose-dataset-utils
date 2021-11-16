@@ -11,12 +11,12 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append('../../')
 
-from src import cfg as config
+import cfg as config
 
-from src.NDDS import dataloader
+from NDDS import dataloader
 
-from src.utils import helper_utils
-from src.utils.dataset import affpose_dataset_utils
+from utils import helper_utils
+from utils.dataset import affpose_dataset_utils
 
 
 class TestNDDSDataloader(unittest.TestCase):

@@ -17,12 +17,12 @@ sys.path.append('../')
 #######################################
 #######################################
 
-from src import cfg as config
+import cfg as config
 
-from src.LabelFusion import dataloader
+from LabelFusion import dataloader
 
-from src.utils import helper_utils
-from src.utils.dataset import affpose_dataset_utils
+from utils import helper_utils
+from utils.dataset import affpose_dataset_utils
 
 #######################################
 #######################################

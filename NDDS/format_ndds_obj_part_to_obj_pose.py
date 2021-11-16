@@ -6,12 +6,12 @@ import scipy.io as scio
 import sys
 sys.path.append('../../')
 
-from src import cfg as config
+import cfg as config
 
-from src.NDDS import dataloader as NDDSDataloader
+from NDDS import dataloader as NDDSDataloader
 
-from src.utils.dataset import affpose_dataset_utils
-from src.utils.pose.transform_obj_to_obj_part_pose import get_obj_pose_in_camera_frame
+from utils.dataset import affpose_dataset_utils
+from utils.pose.transform_obj_to_obj_part_pose import get_obj_pose_in_camera_frame
 
 
 def main():

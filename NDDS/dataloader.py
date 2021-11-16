@@ -12,14 +12,14 @@ import scipy.io as scio
 #######################################
 #######################################
 
-from src import cfg as config
+import cfg as config
 
-from src.utils import helper_utils
-from src.utils.dataset import affpose_dataset_utils
+from utils import helper_utils
+from utils.dataset import affpose_dataset_utils
 
-from src.utils.bbox.extract_bboxs_from_label import get_bbox
-from src.utils.pose.load_obj_ply_files import load_obj_ply_files
-from src.utils.pose.transform_obj_to_obj_part_pose import get_obj_part_pose_in_camera_frame
+from utils.bbox.extract_bboxs_from_label import get_bbox
+from utils.pose.load_obj_ply_files import load_obj_ply_files
+from utils.pose.transform_obj_to_obj_part_pose import get_obj_part_pose_in_camera_frame
 
 #######################################
 #######################################

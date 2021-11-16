@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append('../../')
 
-from src.LabelFusion import dataloader
-from src.utils.dataset import affpose_dataset_utils
+from LabelFusion import dataloader
+from utils.dataset import affpose_dataset_utils
 
 
 class TestLabelFusionDataloader(unittest.TestCase):

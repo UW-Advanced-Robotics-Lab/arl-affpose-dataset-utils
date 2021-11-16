@@ -8,12 +8,12 @@ import scipy.io as scio
 import sys
 sys.path.append('../../')
 
-from src import cfg as config
+import cfg as config
 
-from src.LabelFusion import dataloader as LabelFusionDataloader
+from LabelFusion import dataloader as LabelFusionDataloader
 
-from src.utils import helper_utils
-from src.utils.dataset import affpose_dataset_utils
+from utils import helper_utils
+from utils.dataset import affpose_dataset_utils
 
 
 def main():
